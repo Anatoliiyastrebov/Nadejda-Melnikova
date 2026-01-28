@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { getQuestionnaireById } from '../data/questionnaires';
-import { getLanguage } from '../utils/i18n';
+import { useLanguage } from '../context/LanguageContext';
 import './QuestionnaireCard.css';
 
 interface QuestionnaireCardProps {
@@ -9,7 +9,7 @@ interface QuestionnaireCardProps {
 
 export const QuestionnaireCard = ({ questionnaireId }: QuestionnaireCardProps) => {
   const navigate = useNavigate();
-  const lang = getLanguage();
+  const { lang } = useLanguage();
   const questionnaire = getQuestionnaireById(questionnaireId);
   
   if (!questionnaire) return null;

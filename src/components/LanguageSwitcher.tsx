@@ -1,4 +1,5 @@
-import { getLanguage, setLanguage, type Language } from '../utils/i18n';
+import { type Language } from '../utils/i18n';
+import { useLanguage } from '../context/LanguageContext';
 import './LanguageSwitcher.css';
 
 interface LanguageSwitcherProps {
@@ -6,15 +7,13 @@ interface LanguageSwitcherProps {
 }
 
 export const LanguageSwitcher = ({ onLanguageChange }: LanguageSwitcherProps) => {
-  const currentLang = getLanguage();
+  const { lang: currentLang, setLang } = useLanguage();
   
   const handleChange = (lang: Language) => {
-    setLanguage(lang);
+    setLang(lang);
     if (onLanguageChange) {
       onLanguageChange(lang);
     }
-    // Перезагружаем страницу для применения изменений
-    window.location.reload();
   };
   
   return (

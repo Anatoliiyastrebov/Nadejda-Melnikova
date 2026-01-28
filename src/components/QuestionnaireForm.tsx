@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { getQuestionnaireById, type Questionnaire, type QuestionField } from '../data/questionnaires';
-import { getLanguage, t } from '../utils/i18n';
+import { t } from '../utils/i18n';
+import { useLanguage } from '../context/LanguageContext';
 import { sendToTelegram, exportToJSON } from '../utils/telegram';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import './QuestionnaireForm.css';
@@ -9,7 +10,7 @@ import './QuestionnaireForm.css';
 export const QuestionnaireForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const lang = getLanguage();
+  const { lang } = useLanguage();
   
   const [questionnaire, setQuestionnaire] = useState<Questionnaire | null>(null);
   const [formData, setFormData] = useState<Record<string, any>>({});

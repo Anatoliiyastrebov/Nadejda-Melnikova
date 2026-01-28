@@ -47,7 +47,22 @@ const translations: Record<Language, Translations> = {
     },
     impressum: {
       title: 'Политика конфиденциальности',
-      content: 'Информация о владельце сайта и обработке данных'
+      content: 'Информация о владельце сайта и обработке данных',
+      owner: 'Владелец сайта',
+      name: 'Надежда',
+      profession: 'Wellness-консультант',
+      contact: 'Контактная информация',
+      contactTextRu: 'Для связи используйте форму обратной связи на главной странице.',
+      contactTextEn: 'Contact us through the feedback form on the main page.',
+      dataProtection: 'Защита персональных данных',
+      dataProtectionText: 'Мы обрабатываем ваши персональные данные в соответствии с GDPR и другими применимыми законами о защите данных. Данные используются исключительно для консультационных целей и не передаются третьим лицам. Все данные хранятся в зашифрованном виде и обрабатываются с соблюдением конфиденциальности.',
+      dataCollection: 'Сбор данных',
+      dataCollectionText: 'Мы собираем только те данные, которые вы добровольно предоставляете при заполнении анкет. Это включает информацию о здоровье, контактные данные и другую информацию, необходимую для предоставления консультационных услуг.',
+      dataStorage: 'Хранение данных',
+      dataStorageText: 'Ваши данные хранятся на защищенных серверах и обрабатываются в соответствии с требованиями безопасности. Мы принимаем все необходимые меры для защиты ваших данных от несанкционированного доступа.',
+      rights: 'Ваши права',
+      rightsText: 'Вы имеете право на доступ, исправление, удаление и ограничение обработки ваших персональных данных. Вы также можете отозвать свое согласие на обработку данных в любое время. Для осуществления этих прав свяжитесь с нами.',
+      back: 'Вернуться на главную'
     }
   },
   en: {
@@ -89,7 +104,22 @@ const translations: Record<Language, Translations> = {
     },
     impressum: {
       title: 'Privacy Policy',
-      content: 'Information about the website owner and data processing'
+      content: 'Information about the website owner and data processing',
+      owner: 'Website Owner',
+      name: 'Nadezhda',
+      profession: 'Wellness Consultant',
+      contact: 'Contact Information',
+      contactTextRu: 'For contact please use the feedback form on the main page.',
+      contactTextEn: 'Contact us through the feedback form on the main page.',
+      dataProtection: 'Data Protection',
+      dataProtectionText: 'We process your personal data in accordance with GDPR and other applicable data protection laws. Data is used solely for consultation purposes and is not shared with third parties. All data is stored in encrypted form and processed with confidentiality.',
+      dataCollection: 'Data Collection',
+      dataCollectionText: 'We only collect data that you voluntarily provide when filling out questionnaires. This includes health information, contact details, and other information necessary to provide consultation services.',
+      dataStorage: 'Data Storage',
+      dataStorageText: 'Your data is stored on secure servers and processed in accordance with security requirements. We take all necessary measures to protect your data from unauthorized access.',
+      rights: 'Your Rights',
+      rightsText: 'You have the right to access, correct, delete, and restrict the processing of your personal data. You can also withdraw your consent to data processing at any time. To exercise these rights, please contact us.',
+      back: 'Back to Home'
     }
   }
 };

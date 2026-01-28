@@ -2,11 +2,12 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import { QuestionnaireCard } from '../components/QuestionnaireCard';
-import { getLanguage, t } from '../utils/i18n';
+import { t } from '../utils/i18n';
+import { useLanguage } from '../context/LanguageContext';
 import './Landing.css';
 
 export const Landing: React.FC = () => {
-  const lang = getLanguage();
+  const { lang } = useLanguage();
   
   return (
     <div className="landing">
