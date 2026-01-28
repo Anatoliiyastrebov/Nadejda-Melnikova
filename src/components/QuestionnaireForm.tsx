@@ -261,6 +261,8 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
   lang
 }) => {
   const [fileList, setFileList] = useState<File[]>([]);
+  const label = (question.labelEn && lang === 'en') ? question.labelEn : question.label;
+  const placeholder = (question.placeholderEn && lang === 'en') ? question.placeholderEn : question.placeholder;
   
   // Проверяем, нужно ли показывать условные поля
   const conditionalFields = question.conditionalFields?.find(cond => {
@@ -294,7 +296,7 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
                 }
                 onChange(inputValue);
               }}
-              placeholder={question.placeholder}
+              placeholder={placeholder}
               className={`form-input ${errors?.[question.id] ? 'error' : ''}`}
             />
             {isTelegramField && value && (
@@ -318,7 +320,7 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
               id={question.id}
               value={value || ''}
               onChange={(e) => onChange(e.target.value ? Number(e.target.value) : '')}
-              placeholder={question.placeholder}
+              placeholder={placeholder}
               className="form-input"
               min={question.min}
               max={question.max}
@@ -332,10 +334,16 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
           <div className="grouped-fields">
             {question.groupedFields?.map(field => (
               <div key={field.id} className="grouped-field">
+                {(() => {
+                  const fieldLabel = (field.labelEn && lang === 'en') ? field.labelEn : field.label;
+                  const fieldPlaceholder = (field.placeholderEn && lang === 'en') ? field.placeholderEn : field.placeholder;
+                  return (
                 <label htmlFor={field.id} className="grouped-field-label">
-                  {field.label}
+                  {fieldLabel}
                   {field.required && <span className="required">*</span>}
                 </label>
+                  );
+                })()}
                 {field.type === 'text' ? (
                   <input
                     type="text"
@@ -346,7 +354,7 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
                         onFieldChange(field.id, e.target.value);
                       }
                     }}
-                    placeholder={field.placeholder}
+                    placeholder={(field.placeholderEn && lang === 'en') ? field.placeholderEn : field.placeholder}
                     className={`form-input ${errors?.[field.id] ? 'error' : ''}`}
                   />
                 ) : (
@@ -360,7 +368,7 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
                           onFieldChange(field.id, e.target.value ? Number(e.target.value) : '');
                         }
                       }}
-                      placeholder={field.placeholder}
+                      placeholder={(field.placeholderEn && lang === 'en') ? field.placeholderEn : field.placeholder}
                       className={`form-input ${errors?.[field.id] ? 'error' : ''}`}
                       min={field.unit === 'месяцев' ? 0 : field.unit === 'лет' ? 1 : 0}
                       max={field.unit === 'месяцев' ? 12 : undefined}
@@ -382,7 +390,7 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
             id={question.id}
             value={value || ''}
             onChange={(e) => onChange(e.target.value)}
-            placeholder={question.placeholder}
+            placeholder={placeholder}
             className="form-textarea"
             rows={4}
           />
@@ -400,7 +408,7 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
                   checked={value === option.value}
                   onChange={(e) => onChange(e.target.value)}
                 />
-                <span>{option.label}</span>
+                <span>{(option.labelEn && lang === 'en') ? option.labelEn : option.label}</span>
               </label>
             ))}
           </div>
@@ -435,7 +443,7 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
                         }
                       }}
                     />
-                    <span>{option.label}</span>
+                    <span>{(option.labelEn && lang === 'en') ? option.labelEn : option.label}</span>
                   </label>
                   {option.hasOther && hasOtherSelected && (
                     <div className="other-input-wrapper">
@@ -447,7 +455,11 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
                             onFieldChange(`${question.id}_other`, e.target.value);
                           }
                         }}
-                        placeholder={question.otherLabel || 'Укажите другое'}
+                        placeholder={
+                          lang === 'en'
+                            ? (question.otherLabelEn || 'Other (please specify)')
+                            : (question.otherLabel || 'Укажите другое')
+                        }
                         className={`form-input other-input ${errors?.[`${question.id}_other`] ? 'error' : ''}`}
                       />
                       {errors?.[`${question.id}_other`] && (
@@ -472,7 +484,7 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
             <option value="">{t('common.chooseOption', lang)}</option>
             {question.options?.map(option => (
               <option key={option.value} value={option.value}>
-                {option.label}
+                {(option.labelEn && lang === 'en') ? option.labelEn : option.label}
               </option>
             ))}
           </select>
@@ -523,7 +535,7 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
   return (
     <div className={`question-field ${isContactField ? 'contact-field' : ''}`}>
       <label htmlFor={question.id} className="question-label">
-        {question.label}
+        {label}
         {question.required && <span className="required">*</span>}
       </label>
       {renderField()}

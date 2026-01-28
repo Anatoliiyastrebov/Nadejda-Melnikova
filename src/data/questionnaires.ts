@@ -6,6 +6,7 @@ export type FieldType = 'text' | 'textarea' | 'radio' | 'checkbox' | 'select' | 
 export interface FieldOption {
   value: string;
   label: string;
+  labelEn?: string;
   hasOther?: boolean; // Если true, при выборе этого варианта показывается текстовое поле "Другое"
 }
 
@@ -22,7 +23,9 @@ export interface GroupedField {
   id: string;
   type: 'text' | 'number';
   label: string;
+  labelEn?: string;
   placeholder?: string;
+  placeholderEn?: string;
   required?: boolean;
   unit?: string; // Единица измерения (кг, см, лет и т.д.)
   min?: number; // Минимальное значение для number
@@ -33,7 +36,9 @@ export interface QuestionField {
   id: string;
   type: FieldType;
   label: string;
+  labelEn?: string;
   placeholder?: string;
+  placeholderEn?: string;
   required?: boolean;
   options?: FieldOption[];
   conditionalFields?: ConditionalField[];
@@ -47,6 +52,7 @@ export interface QuestionField {
   // Для checkbox с вариантом "Другое"
   allowOther?: boolean;
   otherLabel?: string; // Текст для поля "Другое"
+  otherLabelEn?: string;
 }
 
 export interface Questionnaire {
