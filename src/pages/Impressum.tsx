@@ -1,10 +1,9 @@
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { getLanguage, t } from '../utils/i18n';
+import { getLanguage } from '../utils/i18n';
 import { LanguageSwitcher } from '../components/LanguageSwitcher';
 import './Impressum.css';
 
-export const Impressum: React.FC = () => {
+export const Impressum = () => {
   const lang = getLanguage();
   
   const content = {

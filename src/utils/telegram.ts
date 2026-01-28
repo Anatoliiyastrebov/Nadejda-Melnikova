@@ -1,5 +1,5 @@
 // Интеграция с Telegram Bot API
-import { getQuestionnaireById, type Questionnaire, type QuestionField } from '../data/questionnaires';
+import { getQuestionnaireById, type QuestionField } from '../data/questionnaires';
 
 const TELEGRAM_BOT_TOKEN = '8585413661:AAFZ4Y8F0JLLDfQLFNsbSlsUiB4P3qf22Dc';
 const TELEGRAM_CHAT_ID = '-1003086304655';
