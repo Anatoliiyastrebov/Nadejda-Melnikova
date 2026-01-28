@@ -39,6 +39,7 @@ export interface QuestionField {
   multiple?: boolean; // Для file upload
   min?: number; // Для number
   max?: number; // Для number
+  unit?: string; // Единица измерения для числовых полей
   // Для составных полей (group)
   groupedFields?: GroupedField[];
   // Для checkbox с вариантом "Другое"

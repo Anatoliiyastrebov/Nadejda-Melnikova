@@ -1,5 +1,5 @@
 import React from 'react';
-import { getLanguage, setLanguage, t, type Language } from '../utils/i18n';
+import { getLanguage, setLanguage, type Language } from '../utils/i18n';
 import './LanguageSwitcher.css';
 
 interface LanguageSwitcherProps {

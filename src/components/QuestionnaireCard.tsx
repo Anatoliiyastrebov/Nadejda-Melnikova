@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getQuestionnaireById, type Questionnaire } from '../data/questionnaires';
+import { getQuestionnaireById } from '../data/questionnaires';
 import { getLanguage } from '../utils/i18n';
 import './QuestionnaireCard.css';
 
