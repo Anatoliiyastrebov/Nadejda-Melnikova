@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getQuestionnaireById } from '../data/questionnaires';
 import { getLanguage } from '../utils/i18n';
@@ -8,7 +7,7 @@ interface QuestionnaireCardProps {
   questionnaireId: string;
 }
 
-export const QuestionnaireCard: React.FC<QuestionnaireCardProps> = ({ questionnaireId }) => {
+export const QuestionnaireCard = ({ questionnaireId }: QuestionnaireCardProps) => {
   const navigate = useNavigate();
   const lang = getLanguage();
   const questionnaire = getQuestionnaireById(questionnaireId);

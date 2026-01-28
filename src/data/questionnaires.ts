@@ -25,6 +25,8 @@ export interface GroupedField {
   placeholder?: string;
   required?: boolean;
   unit?: string; // Единица измерения (кг, см, лет и т.д.)
+  min?: number; // Минимальное значение для number
+  max?: number; // Максимальное значение для number
 }
 
 export interface QuestionField {

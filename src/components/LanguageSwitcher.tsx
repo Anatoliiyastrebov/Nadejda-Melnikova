@@ -1,4 +1,3 @@
-import React from 'react';
 import { getLanguage, setLanguage, type Language } from '../utils/i18n';
 import './LanguageSwitcher.css';
 
@@ -6,7 +5,7 @@ interface LanguageSwitcherProps {
   onLanguageChange?: (lang: Language) => void;
 }
 
-export const LanguageSwitcher: React.FC<LanguageSwitcherProps> = ({ onLanguageChange }) => {
+export const LanguageSwitcher = ({ onLanguageChange }: LanguageSwitcherProps) => {
   const currentLang = getLanguage();
   
   const handleChange = (lang: Language) => {
