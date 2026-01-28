@@ -23,6 +23,38 @@ export const QuestionnaireForm: React.FC = () => {
       setQuestionnaire(q || null);
     }
   }, [id]);
+
+  // Загружаем сохранённые данные из localStorage при загрузке анкеты
+  useEffect(() => {
+    if (!id) return;
+    const key = `questionnaire_${id}`;
+    const saved = localStorage.getItem(key);
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved) as { formData?: Record<string, any>; consent?: boolean };
+        if (parsed.formData) {
+          setFormData(parsed.formData);
+        }
+        if (typeof parsed.consent === 'boolean') {
+          setConsent(parsed.consent);
+        }
+      } catch {
+        // игнорируем ошибки парсинга
+      }
+    }
+  }, [id]);
+
+  // Сохраняем данные формы и согласие в localStorage при каждом изменении
+  useEffect(() => {
+    if (!id) return;
+    const key = `questionnaire_${id}`;
+    const payload = { formData, consent };
+    try {
+      localStorage.setItem(key, JSON.stringify(payload));
+    } catch {
+      // если localStorage недоступен, просто ничего не делаем
+    }
+  }, [id, formData, consent]);
   
   if (!questionnaire) {
     return (
@@ -164,6 +196,12 @@ export const QuestionnaireForm: React.FC = () => {
       const success = await sendToTelegram(questionnaire.id, formData);
       
       if (success) {
+        // очищаем сохранённые данные для этой анкеты
+        try {
+          localStorage.removeItem(`questionnaire_${questionnaire.id}`);
+        } catch {
+          // игнорируем ошибки
+        }
         alert(t('common.success', lang));
         navigate('/');
       } else {
@@ -336,7 +374,6 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
               <div key={field.id} className="grouped-field">
                 {(() => {
                   const fieldLabel = (field.labelEn && lang === 'en') ? field.labelEn : field.label;
-                  const fieldPlaceholder = (field.placeholderEn && lang === 'en') ? field.placeholderEn : field.placeholder;
                   return (
                 <label htmlFor={field.id} className="grouped-field-label">
                   {fieldLabel}
