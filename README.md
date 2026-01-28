@@ -21,13 +21,34 @@
 npm install
 ```
 
-## Запуск
+## Запуск локально
 
 ```bash
 npm run dev
 ```
 
 Сайт будет доступен на `http://localhost:3000`
+
+## Деплой на Vercel
+
+Проект уже настроен для деплоя на Vercel как Vite-приложение.
+
+Базовые настройки:
+
+- **Framework Preset**: `Vite`
+- **Build Command**: `npm run build`
+- **Output Directory**: `dist`
+
+### Шаги:
+
+1. Зайдите в Vercel и создайте новый проект, выбрав репозиторий  
+   [`Nadejda-Melnikova`](https://github.com/Anatoliiyastrebov/Nadejda-Melnikova).
+2. Убедитесь, что:
+   - команда сборки: `npm run build`
+   - директория вывода: `dist`
+3. Нажмите **Deploy** — после сборки сайт будет доступен по вашему Vercel-домену.
+
+Файл `vercel.json` уже содержит настройки для правильной работы роутинга (все пути отдаются через `index.html`), чтобы страницы анкет и политики конфиденциальности корректно открывались по прямым ссылкам.
 
 ## Настройка Telegram Bot
 
