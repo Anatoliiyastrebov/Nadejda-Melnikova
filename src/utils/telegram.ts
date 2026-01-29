@@ -53,13 +53,27 @@ async function generateQuestionnairePDF(
     male: 'Мужская анкета'
   };
   
+  // Получаем фамилию для имени файла
+  const surname = formData['q1_surname'] || '';
+  const dateStr = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+  
+  // Формируем имя файла: фамилия_дата.pdf
+  // Очищаем фамилию от недопустимых символов для имени файла
+  const cleanSurname = surname
+    .trim()
+    .replace(/[<>:"/\\|?*]/g, '') // Удаляем недопустимые символы
+    .replace(/\s+/g, '_') // Заменяем пробелы на подчеркивания
+    || 'Анкета'; // Fallback, если фамилии нет
+  
+  const fileName = `${cleanSurname}_${dateStr}.pdf`;
+  
   // Создаем HTML-структуру для PDF
   const htmlContent = createQuestionnaireHTML(questionnaireId, formData, questionnaireNames);
   
   // Настройки для html2pdf
   const options = {
     margin: [15, 15, 15, 15] as [number, number, number, number],
-    filename: `${questionnaireNames[questionnaireId] || questionnaireId}_${new Date().toISOString().split('T')[0]}.pdf`,
+    filename: fileName,
     image: { type: 'jpeg' as const, quality: 0.98 },
     html2canvas: { scale: 2, useCORS: true },
     jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
@@ -67,7 +81,6 @@ async function generateQuestionnairePDF(
   
   // Генерируем PDF
   const pdfBlob = await html2pdf().set(options).from(htmlContent).outputPdf('blob');
-  const fileName = `${questionnaireNames[questionnaireId] || questionnaireId}_${new Date().toISOString().split('T')[0]}.pdf`;
   return new File([pdfBlob], fileName, { type: 'application/pdf' });
 }
 
