@@ -1,6 +1,6 @@
 // Интеграция с Telegram Bot API
 import { getQuestionnaireById, type QuestionField } from '../data/questionnaires';
-import { jsPDF } from 'jspdf';
+import html2pdf from 'html2pdf.js';
 
 const TELEGRAM_BOT_TOKEN = '8585413661:AAFZ4Y8F0JLLDfQLFNsbSlsUiB4P3qf22Dc';
 const TELEGRAM_CHAT_ID = '-1003086304655';
@@ -42,10 +42,10 @@ async function sendFileToTelegram(file: File, caption?: string): Promise<boolean
 /**
  * Генерация PDF-файла с анкетой
  */
-function generateQuestionnairePDF(
+async function generateQuestionnairePDF(
   questionnaireId: string,
   formData: Record<string, any>
-): File {
+): Promise<File> {
   const questionnaireNames: Record<string, string> = {
     babies: 'Малыши до 1 года',
     children: 'Детская анкета (1–12 лет)',
@@ -53,42 +53,32 @@ function generateQuestionnairePDF(
     male: 'Мужская анкета'
   };
   
-  const doc = new jsPDF();
-  const pageWidth = doc.internal.pageSize.getWidth();
-  const pageHeight = doc.internal.pageSize.getHeight();
-  const margin = 20;
-  const maxWidth = pageWidth - 2 * margin;
-  let yPosition = margin;
+  // Создаем HTML-структуру для PDF
+  const htmlContent = createQuestionnaireHTML(questionnaireId, formData, questionnaireNames);
   
-  // Функция для добавления новой страницы при необходимости
-  const checkPageBreak = (requiredHeight: number) => {
-    if (yPosition + requiredHeight > pageHeight - margin) {
-      doc.addPage();
-      yPosition = margin;
-    }
+  // Настройки для html2pdf
+  const options = {
+    margin: [15, 15, 15, 15] as [number, number, number, number],
+    filename: `${questionnaireNames[questionnaireId] || questionnaireId}_${new Date().toISOString().split('T')[0]}.pdf`,
+    image: { type: 'jpeg' as const, quality: 0.98 },
+    html2canvas: { scale: 2, useCORS: true },
+    jsPDF: { unit: 'mm' as const, format: 'a4' as const, orientation: 'portrait' as const }
   };
   
-  // Функция для добавления текста с переносами
-  const addText = (text: string, fontSize: number = 12, isBold: boolean = false, color: [number, number, number] = [0, 0, 0]) => {
-    checkPageBreak(fontSize + 5);
-    doc.setFontSize(fontSize);
-    doc.setTextColor(color[0], color[1], color[2]);
-    if (isBold) {
-      doc.setFont('helvetica', 'bold');
-    } else {
-      doc.setFont('helvetica', 'normal');
-    }
-    
-    const lines = doc.splitTextToSize(text, maxWidth);
-    doc.text(lines, margin, yPosition);
-    yPosition += lines.length * (fontSize * 0.4) + 5;
-  };
-  
-  // Заголовок
-  addText(questionnaireNames[questionnaireId] || questionnaireId, 18, true, [0, 0, 0]);
-  yPosition += 5;
-  
-  // Дата
+  // Генерируем PDF
+  const pdfBlob = await html2pdf().set(options).from(htmlContent).outputPdf('blob');
+  const fileName = `${questionnaireNames[questionnaireId] || questionnaireId}_${new Date().toISOString().split('T')[0]}.pdf`;
+  return new File([pdfBlob], fileName, { type: 'application/pdf' });
+}
+
+/**
+ * Создание HTML-структуры для PDF
+ */
+function createQuestionnaireHTML(
+  questionnaireId: string,
+  formData: Record<string, any>,
+  questionnaireNames: Record<string, string>
+): string {
   const dateStr = new Date().toLocaleString('ru-RU', {
     day: '2-digit',
     month: '2-digit',
@@ -96,13 +86,6 @@ function generateQuestionnairePDF(
     hour: '2-digit',
     minute: '2-digit'
   });
-  addText(`Дата заполнения: ${dateStr}`, 10, false, [100, 100, 100]);
-  yPosition += 10;
-  
-  // Разделитель
-  doc.setDrawColor(200, 200, 200);
-  doc.line(margin, yPosition, pageWidth - margin, yPosition);
-  yPosition += 10;
   
   // Основная информация
   const name = formData['q1_name'] || '';
@@ -110,16 +93,6 @@ function generateQuestionnairePDF(
   const age = formData['q1_age'] || '';
   const weight = formData['q1_weight'] || '';
   const height = formData['q1_height'] || '';
-  
-  if (name || surname || age || weight) {
-    addText('Основная информация', 14, true);
-    if (name) addText(`Имя: ${name}`, 11);
-    if (surname) addText(`Фамилия: ${surname}`, 11);
-    if (age) addText(`Возраст: ${age}`, 11);
-    if (weight) addText(`Вес: ${weight} кг`, 11);
-    if (height) addText(`Рост: ${height} см`, 11);
-    yPosition += 5;
-  }
   
   // Обрабатываем остальные ответы
   const processedKeys = new Set(['q1_name', 'q1_surname', 'q1_age', 'q1_weight', 'q1_height', 'contact_telegram', 'contact_instagram']);
@@ -180,6 +153,9 @@ function generateQuestionnairePDF(
       return orderA - orderB;
     });
   
+  // Формируем HTML для вопросов и ответов
+  let questionsHTML = '';
+  
   for (const [key, value] of sortedEntries) {
     const questionIndex = questionOrderMap.get(key) ?? -1;
     if (questionIndex >= numberingStartIndex && numberingStartIndex !== -1) {
@@ -190,8 +166,7 @@ function generateQuestionnairePDF(
     const questionLabel = getQuestionLabel(key, questionnaireId);
     const numberedLabel = shouldNumber ? `${questionNumber}. ${questionLabel}` : questionLabel;
     
-    checkPageBreak(15);
-    addText(numberedLabel, 12, true);
+    let answerHTML = '';
     
     if (Array.isArray(value)) {
       const questionnaire = getQuestionnaireById(questionnaireId);
@@ -204,75 +179,178 @@ function generateQuestionnairePDF(
             const option = question.options?.find(opt => opt.value === v);
             return option ? option.label : v;
           });
-          optionLabels.forEach(label => addText(`  • ${label}`, 11));
+          answerHTML = optionLabels.map(label => `<li>${escapeHtml(label)}</li>`).join('');
         } else {
-          values.forEach(v => addText(`  • ${v}`, 11));
+          answerHTML = values.map(v => `<li>${escapeHtml(String(v))}</li>`).join('');
         }
       }
       if (value.includes('other') && formData[`${key}_other`]) {
-        addText(`  • Другое: ${formData[`${key}_other`]}`, 11);
+        answerHTML += `<li><strong>Другое:</strong> ${escapeHtml(formData[`${key}_other`])}</li>`;
       }
       if (value.includes('none')) {
-        addText(`  • Не беспокоит`, 11);
+        answerHTML += '<li>Не беспокоит</li>';
+      }
+      if (answerHTML) {
+        answerHTML = `<ul style="margin: 5px 0; padding-left: 25px;">${answerHTML}</ul>`;
       }
     } else if (value instanceof FileList || (Array.isArray(value) && value.length > 0 && value[0] instanceof File)) {
       const files = value instanceof FileList ? Array.from(value) : value;
-      addText(`  📎 Загружено файлов: ${files.length}`, 11);
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i] as File;
-        addText(`     ${i + 1}. ${file.name} (${(file.size / 1024).toFixed(1)} KB)`, 10);
-      }
+      answerHTML = `<p style="margin: 5px 0;">📎 Загружено файлов: ${files.length}</p>`;
+      const filesList = Array.from(files).map((file: File, i: number) => 
+        `<p style="margin: 2px 0; padding-left: 20px; font-size: 10px; color: #666;">${i + 1}. ${escapeHtml(file.name)} (${(file.size / 1024).toFixed(1)} KB)</p>`
+      ).join('');
+      answerHTML += filesList;
     } else {
       const questionnaire = getQuestionnaireById(questionnaireId);
       const question = questionnaire?.questions.find(q => q.id === key);
       
       if (question?.options) {
         const option = question.options.find(opt => opt.value === value);
-        if (option) {
-          addText(`  ${option.label}`, 11);
-        } else {
-          addText(`  ${value}`, 11);
-        }
+        answerHTML = `<p style="margin: 5px 0;">${escapeHtml(option ? option.label : String(value))}</p>`;
       } else {
-        addText(`  ${value}`, 11);
+        answerHTML = `<p style="margin: 5px 0;">${escapeHtml(String(value))}</p>`;
       }
     }
-    yPosition += 3;
+    
+    questionsHTML += `
+      <div style="margin-bottom: 20px; page-break-inside: avoid;">
+        <h3 style="margin: 0 0 8px 0; font-size: 13px; font-weight: bold; color: #2c3e50;">${escapeHtml(numberedLabel)}</h3>
+        <div style="margin-left: 15px; color: #34495e; font-size: 12px;">
+          ${answerHTML || '<p style="margin: 5px 0; color: #999; font-style: italic;">Ответ не указан</p>'}
+        </div>
+      </div>
+    `;
   }
-  
-  // Разделитель перед контактами
-  yPosition += 5;
-  checkPageBreak(20);
-  doc.setDrawColor(200, 200, 200);
-  doc.line(margin, yPosition, pageWidth - margin, yPosition);
-  yPosition += 10;
   
   // Контактные данные
   const telegram = formData['contact_telegram'] || '';
   const instagram = formData['contact_instagram'] || '';
   
-  addText('Контактные данные для связи', 14, true);
+  let contactsHTML = '';
   if (telegram) {
-    addText(`Telegram: ${telegram}`, 11);
+    contactsHTML += `<p style="margin: 5px 0;"><strong>Telegram:</strong> ${escapeHtml(telegram)}</p>`;
   }
   if (instagram) {
-    addText(`Instagram: @${instagram}`, 11);
+    contactsHTML += `<p style="margin: 5px 0;"><strong>Instagram:</strong> @${escapeHtml(instagram)}</p>`;
   }
   if (!telegram && !instagram) {
-    addText('Не указаны', 11);
+    contactsHTML = '<p style="margin: 5px 0; color: #999;">Не указаны</p>';
   }
   
-  // Футер
-  yPosition = pageHeight - margin;
-  doc.setFontSize(8);
-  doc.setTextColor(150, 150, 150);
-  doc.setFont('helvetica', 'italic');
-  doc.text('Анкета заполнена через сайт', margin, yPosition);
+  // Формируем полный HTML
+  const html = `
+    <!DOCTYPE html>
+    <html>
+    <head>
+      <meta charset="UTF-8">
+      <style>
+        body {
+          font-family: 'Arial', 'Helvetica', sans-serif;
+          font-size: 12px;
+          line-height: 1.6;
+          color: #2c3e50;
+          padding: 0;
+          margin: 0;
+        }
+        .header {
+          text-align: center;
+          margin-bottom: 25px;
+          padding-bottom: 15px;
+          border-bottom: 2px solid #3498db;
+        }
+        .header h1 {
+          margin: 0 0 10px 0;
+          font-size: 20px;
+          color: #2c3e50;
+          font-weight: bold;
+        }
+        .header .date {
+          font-size: 11px;
+          color: #7f8c8d;
+        }
+        .section {
+          margin-bottom: 25px;
+        }
+        .section-title {
+          font-size: 14px;
+          font-weight: bold;
+          color: #2c3e50;
+          margin-bottom: 12px;
+          padding-bottom: 5px;
+          border-bottom: 1px solid #ecf0f1;
+        }
+        .info-item {
+          margin: 5px 0;
+          padding-left: 10px;
+        }
+        .divider {
+          height: 1px;
+          background: #ecf0f1;
+          margin: 20px 0;
+        }
+        .footer {
+          margin-top: 30px;
+          padding-top: 15px;
+          border-top: 1px solid #ecf0f1;
+          text-align: center;
+          font-size: 9px;
+          color: #95a5a6;
+          font-style: italic;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="header">
+        <h1>${escapeHtml(questionnaireNames[questionnaireId] || questionnaireId)}</h1>
+        <div class="date">Дата заполнения: ${escapeHtml(dateStr)}</div>
+      </div>
+      
+      ${name || surname || age || weight || height ? `
+      <div class="section">
+        <div class="section-title">👤 Основная информация</div>
+        ${name ? `<div class="info-item"><strong>Имя:</strong> ${escapeHtml(name)}</div>` : ''}
+        ${surname ? `<div class="info-item"><strong>Фамилия:</strong> ${escapeHtml(surname)}</div>` : ''}
+        ${age ? `<div class="info-item"><strong>Возраст:</strong> ${escapeHtml(String(age))}</div>` : ''}
+        ${weight ? `<div class="info-item"><strong>Вес:</strong> ${escapeHtml(String(weight))} кг</div>` : ''}
+        ${height ? `<div class="info-item"><strong>Рост:</strong> ${escapeHtml(String(height))} см</div>` : ''}
+      </div>
+      <div class="divider"></div>
+      ` : ''}
+      
+      <div class="section">
+        <div class="section-title">📋 Ответы на вопросы</div>
+        ${questionsHTML}
+      </div>
+      
+      <div class="divider"></div>
+      
+      <div class="section">
+        <div class="section-title">📞 Контактные данные для связи</div>
+        ${contactsHTML}
+      </div>
+      
+      <div class="footer">
+        Анкета заполнена через сайт
+      </div>
+    </body>
+    </html>
+  `;
   
-  // Генерируем Blob и создаем File
-  const pdfBlob = doc.output('blob');
-  const fileName = `${questionnaireNames[questionnaireId] || questionnaireId}_${new Date().toISOString().split('T')[0]}.pdf`;
-  return new File([pdfBlob], fileName, { type: 'application/pdf' });
+  return html;
+}
+
+/**
+ * Экранирование HTML для безопасности
+ */
+function escapeHtml(text: string): string {
+  const map: Record<string, string> = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return String(text).replace(/[&<>"']/g, (m) => map[m]);
 }
 
 /**
@@ -356,7 +434,7 @@ export async function sendToTelegram(
     
     // Генерируем и отправляем PDF с анкетой
     try {
-      const pdfFile = generateQuestionnairePDF(questionnaireId, formData);
+      const pdfFile = await generateQuestionnairePDF(questionnaireId, formData);
       const pdfCaption = `📄 PDF-версия анкеты: ${pdfFile.name}`;
       const pdfSent = await sendFileToTelegram(pdfFile, pdfCaption);
       if (pdfSent) {
