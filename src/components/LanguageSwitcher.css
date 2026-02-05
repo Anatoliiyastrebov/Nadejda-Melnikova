@@ -28,3 +28,22 @@
   border-color: #6b7d6b;
 }
 
+@media (max-width: 768px) {
+  .language-switcher {
+    gap: 4px;
+    flex-shrink: 0;
+  }
+  
+  .lang-btn {
+    padding: 5px 12px;
+    font-size: 13px;
+  }
+}
+
+@media (max-width: 400px) {
+  .lang-btn {
+    padding: 4px 10px;
+    font-size: 12px;
+  }
+}
+

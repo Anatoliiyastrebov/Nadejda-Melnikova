@@ -203,6 +203,10 @@
 }
 
 @media (max-width: 768px) {
+  .landing-header {
+    padding: 16px;
+  }
+  
   .landing-title {
     font-size: 32px;
   }
