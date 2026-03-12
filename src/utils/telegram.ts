@@ -2,41 +2,23 @@
 import { getQuestionnaireById, type QuestionField } from '../data/questionnaires';
 import html2pdf from 'html2pdf.js';
 
-const TELEGRAM_BOT_TOKEN = '8585413661:AAFZ4Y8F0JLLDfQLFNsbSlsUiB4P3qf22Dc';
-const TELEGRAM_CHAT_ID = '-1003086304655';
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
+const DANGEROUS_FILE_EXTENSIONS = ['.exe', '.bat', '.cmd', '.com', '.scr', '.pif', '.vbs', '.ps1', '.dll', '.msi', '.jar', '.sh'];
+const DEBUG_UPLOAD = (import.meta as any).env?.VITE_DEBUG_UPLOAD === 'true';
 
 /**
- * Отправка файла в Telegram
+ * Валидация файла перед отправкой на сервер
  */
-async function sendFileToTelegram(file: File, caption?: string): Promise<boolean> {
-  try {
-    const formData = new FormData();
-    formData.append('chat_id', TELEGRAM_CHAT_ID);
-    formData.append('document', file);
-    if (caption) {
-      formData.append('caption', caption);
-    }
-    
-    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendDocument`;
-    
-    const response = await fetch(url, {
-      method: 'POST',
-      body: formData
-    });
-    
-    const responseData = await response.json();
-    
-    if (!response.ok) {
-      console.error('Telegram file upload error:', responseData);
-      return false;
-    }
-    
-    console.log('File sent successfully:', file.name);
-    return true;
-  } catch (error) {
-    console.error('Error sending file to Telegram:', error);
-    return false;
+function validateUploadFile(file: File): { valid: boolean; reason?: string } {
+  if (!file) return { valid: false, reason: 'Missing file object' };
+  if (!file.name) return { valid: false, reason: 'Missing filename' };
+  if (file.size <= 0) return { valid: false, reason: 'Empty file' };
+  if (file.size > MAX_FILE_SIZE) return { valid: false, reason: `File too large: ${file.name}` };
+  const ext = `.${(file.name.split('.').pop() || '').toLowerCase()}`;
+  if (DANGEROUS_FILE_EXTENSIONS.includes(ext)) {
+    return { valid: false, reason: `Blocked file type: ${file.name}` };
   }
+  return { valid: true };
 }
 
 /**
@@ -377,112 +359,78 @@ export async function sendToTelegram(
   formData: Record<string, any>
 ): Promise<boolean> {
   try {
-    // Собираем все файлы из формы
-    const files: { file: File; questionLabel: string }[] = [];
-    
-    for (const [key, value] of Object.entries(formData)) {
+    const message = formatQuestionnaireMessage(questionnaireId, formData);
+
+    // Собираем все вложения пользователя
+    const uploadedFiles: File[] = [];
+    for (const value of Object.values(formData)) {
       if (!value) continue;
-      
-      // Обрабатываем FileList
-      if (value instanceof FileList) {
-        const questionnaire = getQuestionnaireById(questionnaireId);
-        const question = questionnaire?.questions.find(q => q.id === key);
-        const questionLabel = question?.label || key;
-        
-        Array.from(value).forEach(file => {
-          if (file instanceof File) {
-            files.push({ file, questionLabel });
-          }
-        });
-      } 
-      // Обрабатываем массив File объектов
-      else if (Array.isArray(value) && value.length > 0) {
-        const questionnaire = getQuestionnaireById(questionnaireId);
-        const question = questionnaire?.questions.find(q => q.id === key);
-        const questionLabel = question?.label || key;
-        
-        value.forEach((item: any) => {
-          if (item instanceof File) {
-            files.push({ file: item, questionLabel });
-          }
+      if (value instanceof File) uploadedFiles.push(value);
+      if (Array.isArray(value)) {
+        value.forEach((item) => {
+          if (item instanceof File) uploadedFiles.push(item);
         });
       }
-      // Обрабатываем одиночный File объект
-      else if (value instanceof File) {
-        const questionnaire = getQuestionnaireById(questionnaireId);
-        const question = questionnaire?.questions.find(q => q.id === key);
-        const questionLabel = question?.label || key;
-        files.push({ file: value, questionLabel });
+      if (value instanceof FileList) {
+        Array.from(value).forEach((item) => uploadedFiles.push(item));
       }
     }
-    
-    console.log(`Found ${files.length} file(s) to send`);
-    
-    // Формируем структурированное сообщение
-    const message = formatQuestionnaireMessage(questionnaireId, formData);
-    
-    // URL для отправки сообщения через Telegram Bot API
-    const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
-    
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        chat_id: TELEGRAM_CHAT_ID,
-        text: message,
-        parse_mode: 'HTML'
-      })
-    });
-    
-    const responseData = await response.json();
-    
-    if (!response.ok) {
-      console.error('Telegram API error:', responseData);
+
+    // Валидация файлов до запроса
+    for (const file of uploadedFiles) {
+      const validation = validateUploadFile(file);
+      if (!validation.valid) {
+        console.error('File validation failed:', validation.reason);
+        return false;
+      }
+    }
+
+    // Генерируем PDF и добавляем к отправке
+    const pdfFile = await generateQuestionnairePDF(questionnaireId, formData);
+    const pdfValidation = validateUploadFile(pdfFile);
+    if (!pdfValidation.valid) {
+      console.error('Generated PDF failed validation:', pdfValidation.reason);
       return false;
     }
-    
-    console.log('Message sent successfully:', responseData);
-    
-    // Генерируем и отправляем PDF с анкетой
-    try {
-      const pdfFile = await generateQuestionnairePDF(questionnaireId, formData);
-      const pdfCaption = `📄 PDF-версия анкеты: ${pdfFile.name}`;
-      const pdfSent = await sendFileToTelegram(pdfFile, pdfCaption);
-      if (pdfSent) {
-        console.log('PDF sent successfully');
-      } else {
-        console.warn('Failed to send PDF');
-      }
-      // Небольшая задержка перед отправкой других файлов
-      await new Promise(resolve => setTimeout(resolve, 500));
-    } catch (error) {
-      console.error('Error generating or sending PDF:', error);
+
+    const submitFormData = new FormData();
+    submitFormData.append('questionnaireId', questionnaireId);
+    submitFormData.append('message', message);
+    submitFormData.append('payload', exportToJSON(questionnaireId, formData));
+    submitFormData.append('pdf', pdfFile, pdfFile.name);
+
+    uploadedFiles.forEach((file, index) => {
+      submitFormData.append(`file_${index}`, file, file.name);
+    });
+
+    if (DEBUG_UPLOAD) {
+      console.log('[DEBUG_UPLOAD] form received on client', {
+        questionnaireId,
+        uploadedFiles: uploadedFiles.map((f) => ({ name: f.name, size: f.size, type: f.type })),
+        pdf: { name: pdfFile.name, size: pdfFile.size }
+      });
     }
-    
-    // Отправляем файлы отдельными сообщениями
-    if (files.length > 0) {
-      console.log(`Sending ${files.length} file(s)...`);
-      
-      for (let i = 0; i < files.length; i++) {
-        const { file, questionLabel } = files[i];
-        const fileCaption = `📎 Файл ${i + 1}/${files.length} из вопроса: ${questionLabel}\nИмя файла: ${file.name}`;
-        
-        const fileSent = await sendFileToTelegram(file, fileCaption);
-        if (!fileSent) {
-          console.warn(`Failed to send file: ${file.name}`);
-        }
-        
-        // Небольшая задержка между отправками, чтобы не превысить лимиты API
-        if (i < files.length - 1) {
-          await new Promise(resolve => setTimeout(resolve, 500));
-        }
-      }
-      
-      console.log('All files sent');
+
+    const response = await fetch('/api/submit', {
+      method: 'POST',
+      body: submitFormData
+    });
+
+    const responseData = await response.json().catch(() => ({}));
+    if (DEBUG_UPLOAD) {
+      console.log('[DEBUG_UPLOAD] telegram response', responseData);
     }
-    
+
+    if (!response.ok) {
+      console.error('Upload pipeline failed:', responseData);
+      return false;
+    }
+
+    if (responseData && responseData.ok === false) {
+      console.error('Upload pipeline returned partial failure:', responseData);
+      return false;
+    }
+
     return true;
   } catch (error) {
     console.error('Error sending to Telegram:', error);

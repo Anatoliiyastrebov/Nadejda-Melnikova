@@ -104,7 +104,7 @@ export const QuestionnaireForm: React.FC = () => {
     }
   };
   
-  const validateForm = (): boolean => {
+  const validateForm = (): Record<string, string> => {
     const newErrors: Record<string, string> = {};
     
     const validateQuestion = (question: QuestionField) => {
@@ -124,6 +124,13 @@ export const QuestionnaireForm: React.FC = () => {
       if (question.type === 'checkbox' && question.allowOther) {
         const selectedValues = Array.isArray(formData[question.id]) ? formData[question.id] : [];
         if (selectedValues.includes('other') && !formData[`${question.id}_other`]) {
+          newErrors[`${question.id}_other`] = t('common.required', lang);
+        }
+      }
+      
+      // Для radio с "Другое" проверяем, что если выбрано "other", то заполнено поле "other"
+      if (question.type === 'radio' && question.allowOther) {
+        if (formData[question.id] === 'other' && !formData[`${question.id}_other`]) {
           newErrors[`${question.id}_other`] = t('common.required', lang);
         }
       }
@@ -162,7 +169,31 @@ export const QuestionnaireForm: React.FC = () => {
     allQuestions.forEach(validateQuestion);
     
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return newErrors;
+  };
+  
+  // Функция для прокрутки к первой ошибке
+  const scrollToFirstError = (errorKeys: string[]) => {
+    if (errorKeys.length === 0) return;
+    
+    // Небольшая задержка, чтобы DOM обновился
+    setTimeout(() => {
+      for (const errorId of errorKeys) {
+        const errorElement = document.getElementById(errorId) || 
+                           document.querySelector(`[data-field-id="${errorId}"]`) ||
+                           document.querySelector(`[name="${errorId}"]`);
+        if (errorElement) {
+          errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+          // Фокусируемся на поле, если это input
+          if (errorElement instanceof HTMLInputElement || 
+              errorElement instanceof HTMLTextAreaElement || 
+              errorElement instanceof HTMLSelectElement) {
+            errorElement.focus();
+          }
+          break;
+        }
+      }
+    }, 100);
   };
   
   const handleSubmit = async (e: React.FormEvent) => {
@@ -170,20 +201,43 @@ export const QuestionnaireForm: React.FC = () => {
     
     if (!consent) {
       alert(t('common.consentRequired', lang));
+      // Прокрутка к чекбоксу согласия
+      const consentElement = document.getElementById('consent-checkbox');
+      if (consentElement) {
+        consentElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
       return;
     }
     
-    if (!validateForm()) {
-      // Прокручиваем к первой ошибке
-      const firstErrorId = Object.keys(errors)[0];
-      if (firstErrorId) {
-        const errorElement = document.getElementById(firstErrorId) || 
-                           document.querySelector(`[data-field-id="${firstErrorId}"]`);
-        if (errorElement) {
-          errorElement.scrollIntoView({ behavior: 'smooth', block: 'center' });
-        }
-      }
+    const validationErrors = validateForm();
+    const errorKeys = Object.keys(validationErrors);
+    
+    if (errorKeys.length > 0) {
+      scrollToFirstError(errorKeys);
       return;
+    }
+
+    // Дополнительная проверка файлов перед отправкой
+    const requiredFileFields = getAllQuestions(questionnaire.questions)
+      .filter((q) => q.type === 'file' && q.required)
+      .map((q) => q.id);
+
+    for (const fileFieldId of requiredFileFields) {
+      const fileValue = formData[fileFieldId];
+      const hasFiles =
+        fileValue instanceof File
+          ? true
+          : Array.isArray(fileValue)
+          ? fileValue.some((f) => f instanceof File && f.size > 0)
+          : fileValue instanceof FileList
+          ? fileValue.length > 0
+          : false;
+
+      if (!hasFiles) {
+        setErrors((prev) => ({ ...prev, [fileFieldId]: t('common.required', lang) }));
+        scrollToFirstError([fileFieldId]);
+        return;
+      }
     }
     
     setIsSubmitting(true);
@@ -223,9 +277,6 @@ export const QuestionnaireForm: React.FC = () => {
           <img src="/logo.svg" alt="Wellness Logo" className="header-logo" />
         </Link>
         <div className="form-header-right">
-          <button className="back-button" onClick={() => navigate('/')}>
-            ← {t('common.back', lang)}
-          </button>
           <LanguageSwitcher />
         </div>
       </header>
@@ -235,7 +286,7 @@ export const QuestionnaireForm: React.FC = () => {
           <h1>{questionnaire.name[lang]}</h1>
         </div>
         
-        <form className="questionnaire-form" onSubmit={handleSubmit}>
+        <form className="questionnaire-form" onSubmit={handleSubmit} encType="multipart/form-data">
           {allQuestions.map(question => (
             <QuestionFieldComponent
               key={question.id}
@@ -250,7 +301,7 @@ export const QuestionnaireForm: React.FC = () => {
             />
           ))}
           
-          <div className="consent-section">
+          <div className="consent-section" id="consent-checkbox">
             <label className="consent-label">
               <input
                 type="checkbox"
@@ -435,19 +486,52 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
         );
       
       case 'radio':
+        const radioOtherSelected = value === 'other';
+        const radioOtherValue = formData[`${question.id}_other`] || '';
+        
         return (
           <div className="radio-group">
             {question.options?.map(option => (
-              <label key={option.value} className="radio-label">
-                <input
-                  type="radio"
-                  name={question.id}
-                  value={option.value}
-                  checked={value === option.value}
-                  onChange={(e) => onChange(e.target.value)}
-                />
-                <span>{(option.labelEn && lang === 'en') ? option.labelEn : option.label}</span>
-              </label>
+              <React.Fragment key={option.value}>
+                <label className="radio-label">
+                  <input
+                    type="radio"
+                    name={question.id}
+                    value={option.value}
+                    checked={value === option.value}
+                    onChange={(e) => {
+                      onChange(e.target.value);
+                      // Очищаем поле "Другое" при выборе другой опции
+                      if (option.value !== 'other' && onFieldChange) {
+                        onFieldChange(`${question.id}_other`, '');
+                      }
+                    }}
+                  />
+                  <span>{(option.labelEn && lang === 'en') ? option.labelEn : option.label}</span>
+                </label>
+                {option.hasOther && radioOtherSelected && (
+                  <div className="other-input-wrapper">
+                    <input
+                      type="text"
+                      value={radioOtherValue}
+                      onChange={(e) => {
+                        if (onFieldChange) {
+                          onFieldChange(`${question.id}_other`, e.target.value);
+                        }
+                      }}
+                      placeholder={
+                        lang === 'en'
+                          ? (question.otherLabelEn || 'Please specify')
+                          : (question.otherLabel || 'Уточните')
+                      }
+                      className={`form-input other-input ${errors?.[`${question.id}_other`] ? 'error' : ''}`}
+                    />
+                    {errors?.[`${question.id}_other`] && (
+                      <div className="error-message">{errors[`${question.id}_other`]}</div>
+                    )}
+                  </div>
+                )}
+              </React.Fragment>
             ))}
           </div>
         );
@@ -537,10 +621,39 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
               accept={question.accept === '*' ? undefined : question.accept}
               multiple={question.multiple}
               onChange={(e) => {
-                const files = Array.from(e.target.files || []);
-                setFileList(files);
-                // Сохраняем массив File объектов для отправки в Telegram
-                onChange(files.length > 0 ? files : null);
+                try {
+                  const files = Array.from(e.target.files || []);
+                  
+                  // Проверяем валидность файлов
+                  const validFiles = files.filter(file => {
+                    if (!file || file.size === 0) {
+                      console.warn(`Skipping empty or invalid file: ${file?.name || 'unknown'}`);
+                      return false;
+                    }
+                    // Проверяем размер файла (50MB лимит Telegram)
+                    const MAX_SIZE = 50 * 1024 * 1024;
+                    if (file.size > MAX_SIZE) {
+                      const errorMsg = t('common.fileTooLarge', lang);
+                      alert(`${file.name}: ${errorMsg}`);
+                      return false;
+                    }
+                    return true;
+                  });
+                  
+                  setFileList(validFiles);
+                  
+                  // Сохраняем массив File объектов для отправки в Telegram
+                  // Важно: сохраняем именно массив File объектов, а не FileList
+                  onChange(validFiles.length > 0 ? validFiles : null);
+                  
+                  if (validFiles.length !== files.length) {
+                    console.warn(`Filtered out ${files.length - validFiles.length} invalid file(s)`);
+                  }
+                } catch (error) {
+                  console.error('Error processing files:', error);
+                  setFileList([]);
+                  onChange(null);
+                }
               }}
               className="file-input"
             />
@@ -551,13 +664,25 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
             </label>
             {fileList.length > 0 && (
               <div className="file-list">
-                {fileList.map((file, idx) => (
-                  <div key={idx} className="file-item">
-                    <span className="file-item-icon">📄</span>
-                    <span className="file-item-name">{file.name}</span>
-                    <span className="file-item-size">({(file.size / 1024).toFixed(1)} KB)</span>
-                  </div>
-                ))}
+                {fileList.map((file, idx) => {
+                  // Определяем иконку по типу файла
+                  const getFileIcon = (fileName: string) => {
+                    const ext = fileName.split('.').pop()?.toLowerCase();
+                    if (['pdf'].includes(ext || '')) return '📄';
+                    if (['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'].includes(ext || '')) return '🖼️';
+                    if (['doc', 'docx'].includes(ext || '')) return '📝';
+                    if (['xls', 'xlsx'].includes(ext || '')) return '📊';
+                    return '📎';
+                  };
+                  
+                  return (
+                    <div key={idx} className="file-item">
+                      <span className="file-item-icon">{getFileIcon(file.name)}</span>
+                      <span className="file-item-name" title={file.name}>{file.name}</span>
+                      <span className="file-item-size">({(file.size / 1024).toFixed(1)} KB)</span>
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
