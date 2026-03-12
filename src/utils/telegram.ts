@@ -460,8 +460,8 @@ function formatQuestionnaireMessage(
     male: 'Мужская анкета'
   };
   
-  let message = `<b>📋 Новая анкета: ${questionnaireNames[questionnaireId] || questionnaireId}</b>\n\n`;
-  message += `<b>📅 Дата:</b> ${new Date().toLocaleString('ru-RU', { 
+  let message = `📋 Новая анкета: ${questionnaireNames[questionnaireId] || questionnaireId}\n\n`;
+  message += `📅 Дата: ${new Date().toLocaleString('ru-RU', { 
     day: '2-digit', 
     month: '2-digit', 
     year: 'numeric',
@@ -477,11 +477,17 @@ function formatQuestionnaireMessage(
   const weight = formData['q1_weight'] || '';
   const height = formData['q1_height'] || '';
   
+  const ageNumber = typeof age === 'number' ? age : Number(age);
+  const birthYear = Number.isFinite(ageNumber) && ageNumber > 0
+    ? new Date().getFullYear() - ageNumber
+    : null;
+  
   if (name || surname || age || weight) {
-    message += `<b>👤 Основная информация:</b>\n`;
+    message += `👤 Основная информация:\n`;
     if (name) message += `Имя: ${name}\n`;
     if (surname) message += `Фамилия: ${surname}\n`;
     if (age) message += `Возраст: ${age}\n`;
+    if (birthYear) message += `Год рождения (ориентировочно): ${birthYear}\n`;
     if (weight) message += `Вес: ${weight} кг\n`;
     if (height) message += `Рост: ${height} см\n`;
     message += `\n`;
@@ -571,9 +577,17 @@ function formatQuestionnaireMessage(
     // Получаем вопрос из данных анкеты
     const questionLabel = getQuestionLabel(key, questionnaireId);
     const numberedLabel = shouldNumber ? `${questionNumber}. ${questionLabel}` : questionLabel;
-    message += `<b>${numberedLabel}:</b>\n`;
+    message += `${numberedLabel}:\n`;
     
-    if (Array.isArray(value)) {
+    if (value instanceof FileList || (Array.isArray(value) && value.length > 0 && value[0] instanceof File)) {
+      // Обрабатываем файлы
+      const files = value instanceof FileList ? Array.from(value) : value;
+      message += `📎 Загружено файлов: ${files.length}\n`;
+      for (let i = 0; i < files.length; i++) {
+        const file = files[i] as File;
+        message += `   ${i + 1}. ${file.name} (${(file.size / 1024).toFixed(1)} KB)\n`;
+      }
+    } else if (Array.isArray(value)) {
       // Обрабатываем checkbox значения
       const questionnaire = getQuestionnaireById(questionnaireId);
       const question = questionnaire?.questions.find(q => q.id === key);
@@ -598,14 +612,6 @@ function formatQuestionnaireMessage(
       if (value.includes('none')) {
         message += `• Не беспокоит\n`;
       }
-    } else if (value instanceof FileList || (Array.isArray(value) && value.length > 0 && value[0] instanceof File)) {
-      // Обрабатываем файлы
-      const files = value instanceof FileList ? Array.from(value) : value;
-      message += `📎 Загружено файлов: ${files.length}\n`;
-      for (let i = 0; i < files.length; i++) {
-        const file = files[i] as File;
-        message += `   ${i + 1}. ${file.name} (${(file.size / 1024).toFixed(1)} KB)\n`;
-      }
     } else {
       // Обрабатываем radio и select значения
       const questionnaire = getQuestionnaireById(questionnaireId);
@@ -626,7 +632,7 @@ function formatQuestionnaireMessage(
   }
   
   message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
-  message += `<b>📞 Контактные данные для связи:</b>\n`;
+  message += `📞 Контактные данные для связи:\n`;
   if (telegram) {
     message += `💬 Telegram: ${telegram}\n`;
   }
@@ -637,7 +643,7 @@ function formatQuestionnaireMessage(
     message += `Не указаны\n`;
   }
   message += `\n━━━━━━━━━━━━━━━━━━━━\n`;
-  message += `<i>Анкета заполнена через сайт</i>`;
+  message += `Анкета заполнена через сайт`;
   
   return message;
 }
