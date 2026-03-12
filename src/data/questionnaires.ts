@@ -90,13 +90,14 @@ export const babiesQuestionnaire: Questionnaire = {
       type: 'checkbox',
       label: 'Пищеварение — боли в животе, диарея, запор',
       labelEn: 'Digestion – tummy pain, diarrhea, constipation',
+      required: true,
       options: [
+        { value: 'none', label: 'Не беспокоит', labelEn: 'No issues' },
         { value: 'stomach_pain', label: 'Боли в животе', labelEn: 'Tummy pain' },
         { value: 'diarrhea', label: 'Диарея', labelEn: 'Diarrhea' },
         { value: 'constipation', label: 'Запор', labelEn: 'Constipation' },
         { value: 'bloating', label: 'Вздутие', labelEn: 'Bloating' },
-        { value: 'none', label: 'Не беспокоит', labelEn: 'No issues' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
       otherLabel: 'Укажите другие проблемы с пищеварением',
@@ -131,13 +132,14 @@ export const babiesQuestionnaire: Questionnaire = {
       type: 'checkbox',
       label: 'Родинки, бородавки, высыпания, экземы',
       labelEn: 'Moles, warts, rashes, eczema',
+      required: true,
       options: [
+        { value: 'none', label: 'Нет', labelEn: 'None' },
         { value: 'moles', label: 'Родинки', labelEn: 'Moles' },
         { value: 'warts', label: 'Бородавки', labelEn: 'Warts' },
         { value: 'rash', label: 'Высыпания', labelEn: 'Rashes' },
         { value: 'eczema', label: 'Экземы', labelEn: 'Eczema' },
-        { value: 'none', label: 'Нет', labelEn: 'None' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
       otherLabel: 'Укажите другие кожные проявления',
@@ -148,13 +150,14 @@ export const babiesQuestionnaire: Questionnaire = {
       type: 'checkbox',
       label: 'Аллергия (цветение, животные, пыль, еда)',
       labelEn: 'Allergy (pollen, animals, dust, food)',
+      required: true,
       options: [
+        { value: 'none', label: 'Нет аллергии', labelEn: 'No allergy' },
         { value: 'pollen', label: 'Цветение', labelEn: 'Pollen' },
         { value: 'animals', label: 'Животные', labelEn: 'Animals' },
         { value: 'dust', label: 'Пыль', labelEn: 'Dust' },
         { value: 'food', label: 'Еда', labelEn: 'Food' },
-        { value: 'none', label: 'Нет аллергии', labelEn: 'No allergy' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
       otherLabel: 'Укажите другие виды аллергии',
@@ -168,7 +171,8 @@ export const babiesQuestionnaire: Questionnaire = {
       placeholder: 'Количество воды',
       placeholderEn: 'Amount of water',
       unit: 'мл',
-      min: 0
+      min: 0,
+      required: true
     },
     {
       id: 'q8',
@@ -176,27 +180,40 @@ export const babiesQuestionnaire: Questionnaire = {
       label: 'Травмы, операции, удары по голове, падения, переломы',
       labelEn: 'Injuries, surgeries, head hits, falls, fractures',
       placeholder: 'Опишите, если были',
-      placeholderEn: 'Describe if any'
+      placeholderEn: 'Describe if any',
+      required: true
     },
     {
       id: 'q9',
-      type: 'textarea',
-      label: 'Как ребёнок спит',
-      labelEn: 'How does the baby sleep',
-      placeholder: 'Опишите режим и качество сна',
-      placeholderEn: 'Describe sleep pattern and quality'
+      type: 'checkbox',
+      label: 'Качество сна ребёнка',
+      labelEn: 'Baby\'s sleep quality',
+      required: true,
+      options: [
+        { value: 'good', label: 'Спит хорошо', labelEn: 'Sleeps well' },
+        { value: 'hard_to_sleep', label: 'Трудно засыпает', labelEn: 'Hard to fall asleep' },
+        { value: 'restless', label: 'Беспокойный сон', labelEn: 'Restless sleep' },
+        { value: 'wakes_often', label: 'Часто просыпается', labelEn: 'Wakes up often' },
+        { value: 'short_sleep', label: 'Спит мало', labelEn: 'Sleeps little' },
+        { value: 'day_night_confusion', label: 'Путает день и ночь', labelEn: 'Confuses day and night' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
+      ],
+      allowOther: true,
+      otherLabel: 'Опишите особенности сна',
+      otherLabelEn: 'Describe sleep features'
     },
     {
       id: 'q10',
       type: 'checkbox',
       label: 'Часто ли болеет, принимал ли антибиотики или лекарства',
       labelEn: 'Does the baby often get sick, has taken antibiotics or medicines',
+      required: true,
       options: [
+        { value: 'none', label: 'Не болеет, не принимал', labelEn: 'Does not get sick, has not taken' },
         { value: 'often_sick', label: 'Часто болеет', labelEn: 'Often gets sick' },
         { value: 'antibiotics', label: 'Принимал антибиотики', labelEn: 'Has taken antibiotics' },
         { value: 'medications', label: 'Принимал лекарства', labelEn: 'Has taken medicines' },
-        { value: 'none', label: 'Не болеет, не принимал', labelEn: 'Does not get sick, has not taken' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
       otherLabel: 'Укажите дополнительную информацию',
@@ -274,7 +291,8 @@ export const babiesQuestionnaire: Questionnaire = {
       label: 'Проблемы во время беременности',
       labelEn: 'Problems during pregnancy',
       placeholder: 'Опишите, если были',
-      placeholderEn: 'Describe if any'
+      placeholderEn: 'Describe if any',
+      required: true
     },
     {
       id: 'q18',
@@ -282,7 +300,8 @@ export const babiesQuestionnaire: Questionnaire = {
       label: 'Что ещё важно знать о здоровье ребёнка',
       labelEn: 'What else is important to know about the baby’s health',
       placeholder: 'Дополнительная информация',
-      placeholderEn: 'Additional information'
+      placeholderEn: 'Additional information',
+      required: true
     },
     {
       id: 'contact_telegram',
@@ -330,14 +349,15 @@ export const childrenQuestionnaire: Questionnaire = {
       id: 'q2',
       type: 'checkbox',
       label: 'Пищеварение — боли, диарея, запор',
+      required: true,
       labelEn: 'Digestion – pain, diarrhea, constipation',
       options: [
+        { value: 'none', label: 'Не беспокоит', labelEn: 'No issues' },
         { value: 'stomach_pain', label: 'Боли в животе', labelEn: 'Tummy pain' },
         { value: 'diarrhea', label: 'Диарея', labelEn: 'Diarrhea' },
         { value: 'constipation', label: 'Запор', labelEn: 'Constipation' },
         { value: 'bloating', label: 'Вздутие', labelEn: 'Bloating' },
-        { value: 'none', label: 'Не беспокоит', labelEn: 'No issues' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
       otherLabel: 'Укажите другие проблемы с пищеварением',
@@ -395,13 +415,14 @@ export const childrenQuestionnaire: Questionnaire = {
       type: 'checkbox',
       label: 'Родинки, бородавки, высыпания, экземы',
       labelEn: 'Moles, warts, rashes, eczema',
+      required: true,
       options: [
+        { value: 'none', label: 'Нет', labelEn: 'None' },
         { value: 'moles', label: 'Родинки', labelEn: 'Moles' },
         { value: 'warts', label: 'Бородавки', labelEn: 'Warts' },
         { value: 'rash', label: 'Высыпания', labelEn: 'Rashes' },
         { value: 'eczema', label: 'Экземы', labelEn: 'Eczema' },
-        { value: 'none', label: 'Нет', labelEn: 'None' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
       otherLabel: 'Укажите другие кожные проявления',
@@ -412,14 +433,15 @@ export const childrenQuestionnaire: Questionnaire = {
       type: 'checkbox',
       label: 'Аллергия',
       labelEn: 'Allergy',
+      required: true,
       options: [
+        { value: 'none', label: 'Нет аллергии', labelEn: 'No allergy' },
         { value: 'pollen', label: 'Цветение', labelEn: 'Pollen' },
         { value: 'animals', label: 'Животные', labelEn: 'Animals' },
         { value: 'dust', label: 'Пыль', labelEn: 'Dust' },
         { value: 'food', label: 'Еда', labelEn: 'Food' },
         { value: 'medications', label: 'Лекарства', labelEn: 'Medicines' },
-        { value: 'none', label: 'Нет аллергии', labelEn: 'No allergy' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
       otherLabel: 'Укажите другие виды аллергии',
@@ -427,16 +449,22 @@ export const childrenQuestionnaire: Questionnaire = {
     },
     {
       id: 'q9',
-      type: 'radio',
-      label: 'Гиперактивность или усталость',
-      labelEn: 'Hyperactivity or fatigue',
+      type: 'checkbox',
+      label: 'Поведение и энергия ребёнка',
+      labelEn: 'Child behavior and energy',
       required: true,
       options: [
+        { value: 'no', label: 'Нет проблем', labelEn: 'No issues' },
         { value: 'hyperactive', label: 'Гиперактивность', labelEn: 'Hyperactivity' },
-        { value: 'tired', label: 'Усталость', labelEn: 'Fatigue' },
-        { value: 'both', label: 'И то, и другое', labelEn: 'Both' },
-        { value: 'no', label: 'Нет', labelEn: 'No' }
-      ]
+        { value: 'tired', label: 'Быстро устаёт', labelEn: 'Gets tired quickly' },
+        { value: 'restless', label: 'Беспокойный', labelEn: 'Restless' },
+        { value: 'passive', label: 'Пассивный, вялый', labelEn: 'Passive, sluggish' },
+        { value: 'mood_swings', label: 'Частые перемены настроения', labelEn: 'Frequent mood swings' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
+      ],
+      allowOther: true,
+      otherLabel: 'Опишите поведение ребёнка',
+      otherLabelEn: 'Describe the child\'s behavior'
     },
     {
       id: 'q10',
@@ -446,34 +474,48 @@ export const childrenQuestionnaire: Questionnaire = {
       placeholder: 'Количество воды',
       placeholderEn: 'Amount of water',
       unit: 'мл',
-      min: 0
+      min: 0,
+      required: true
     },
     {
       id: 'q11',
       type: 'textarea',
       label: 'Травмы, операции, падения',
       labelEn: 'Injuries, surgeries, falls',
-      placeholder: 'Опишите, если были',
-      placeholderEn: 'Describe if any'
+      placeholder: 'Опишите, если были: какие травмы, операции, были ли серьёзные падения',
+      placeholderEn: 'Describe if any: what injuries, surgeries, any serious falls',
+      required: true
     },
     {
       id: 'q12',
-      type: 'textarea',
-      label: 'Головные боли, плохой сон',
-      labelEn: 'Headaches, poor sleep',
-      placeholder: 'Опишите частоту и характер',
-      placeholderEn: 'Describe frequency and nature'
+      type: 'checkbox',
+      label: 'Головные боли и сон',
+      labelEn: 'Headaches and sleep',
+      required: true,
+      options: [
+        { value: 'no', label: 'Нет проблем', labelEn: 'No issues' },
+        { value: 'headaches', label: 'Бывают головные боли', labelEn: 'Has headaches' },
+        { value: 'hard_to_sleep', label: 'Трудно засыпает', labelEn: 'Hard to fall asleep' },
+        { value: 'restless_sleep', label: 'Беспокойный сон', labelEn: 'Restless sleep' },
+        { value: 'wakes_often', label: 'Часто просыпается ночью', labelEn: 'Wakes up often at night' },
+        { value: 'nightmares', label: 'Кошмары', labelEn: 'Nightmares' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
+      ],
+      allowOther: true,
+      otherLabel: 'Опишите проблему',
+      otherLabelEn: 'Describe the problem'
     },
     {
       id: 'q13',
       type: 'checkbox',
       label: 'Часто ли болеет, антибиотики',
       labelEn: 'Does the child often get sick, antibiotics',
+      required: true,
       options: [
+        { value: 'none', label: 'Не болеет, не принимал', labelEn: 'Does not get sick, has not taken' },
         { value: 'often_sick', label: 'Часто болеет', labelEn: 'Often gets sick' },
         { value: 'antibiotics', label: 'Принимал антибиотики', labelEn: 'Has taken antibiotics' },
-        { value: 'none', label: 'Не болеет, не принимал', labelEn: 'Does not get sick, has not taken' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
       otherLabel: 'Укажите дополнительную информацию',
@@ -485,7 +527,8 @@ export const childrenQuestionnaire: Questionnaire = {
       label: 'Что ещё важно знать о здоровье ребёнка',
       labelEn: 'What else is important to know about the child’s health',
       placeholder: 'Дополнительная информация',
-      placeholderEn: 'Additional information'
+      placeholderEn: 'Additional information',
+      required: true
     },
     {
       id: 'contact_telegram',
@@ -546,7 +589,8 @@ export const femaleQuestionnaire: Questionnaire = {
       label: 'Если недовольны своим весом – сколько хотите убрать или добавить',
       labelEn: 'If you are not satisfied with your weight – how many kg do you want to lose or gain',
       placeholder: 'Например: хочу убрать 5 кг или добавить 3 кг',
-      placeholderEn: 'For example: I want to lose 5 kg or gain 3 kg'
+      placeholderEn: 'For example: I want to lose 5 kg or gain 3 kg',
+      required: true
     },
     {
       id: 'q2',
@@ -565,50 +609,68 @@ export const femaleQuestionnaire: Questionnaire = {
       label: 'Был ли ковид (сколько раз) или вакцина от ковид (сколько доз)',
       labelEn: 'Have you had COVID (how many times) or a COVID vaccine (how many doses)',
       placeholder: 'Опишите подробно. Были ли осложнения после ковид: выпадение волос, проблемы сердца, суставы, потеря памяти, панические атаки, ухудшение сна и т.д.',
-      placeholderEn: 'Describe in detail. Any complications after COVID: hair loss, heart problems, joints, memory loss, panic attacks, worse sleep, etc.'
+      placeholderEn: 'Describe in detail. Any complications after COVID: hair loss, heart problems, joints, memory loss, panic attacks, worse sleep, etc.',
+      required: true
     },
     {
       id: 'q4',
       type: 'checkbox',
-      label: 'Волосы',
-      labelEn: 'Hair',
+      label: 'Состояние волос',
+      labelEn: 'Hair condition',
+      required: true,
       options: [
-        { value: 'satisfied', label: 'Довольны качеством', labelEn: 'Satisfied with quality' },
-        { value: 'hair_loss', label: 'Агрессивно выпадают', labelEn: 'Severely falling out' },
+        { value: 'satisfied', label: 'Довольна качеством', labelEn: 'Satisfied with quality' },
+        { value: 'hair_loss', label: 'Сильно выпадают', labelEn: 'Severely falling out' },
         { value: 'dry', label: 'Сухие', labelEn: 'Dry' },
         { value: 'oily', label: 'Жирные', labelEn: 'Oily' },
         { value: 'brittle', label: 'Ломкие', labelEn: 'Brittle' },
-        { value: 'none', label: 'Нет проблем', labelEn: 'No problems' }
-      ]
+        { value: 'thin', label: 'Тонкие, редеют', labelEn: 'Thin, thinning' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
+      ],
+      allowOther: true,
+      otherLabel: 'Опишите проблему с волосами',
+      otherLabelEn: 'Describe your hair problem'
     },
     {
       id: 'q5',
       type: 'checkbox',
-      label: 'Зубы',
-      labelEn: 'Teeth',
+      label: 'Состояние зубов и дёсен',
+      labelEn: 'Teeth and gums condition',
+      required: true,
       options: [
+        { value: 'none', label: 'Нет проблем', labelEn: 'No problems' },
         { value: 'crumbling', label: 'Быстро крошатся или портятся', labelEn: 'Crumbly or decaying quickly' },
         { value: 'bad_breath', label: 'Неприятный запах изо рта', labelEn: 'Bad breath' },
-        { value: 'bleeding_gums', label: 'Кровоточат десны', labelEn: 'Bleeding gums' },
-        { value: 'none', label: 'Нет проблем', labelEn: 'No problems' }
-      ]
+        { value: 'bleeding_gums', label: 'Кровоточат дёсны', labelEn: 'Bleeding gums' },
+        { value: 'sensitive', label: 'Чувствительные зубы', labelEn: 'Sensitive teeth' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
+      ],
+      allowOther: true,
+      otherLabel: 'Опишите проблему с зубами',
+      otherLabelEn: 'Describe your teeth problem'
     },
     {
       id: 'q6',
       type: 'checkbox',
-      label: 'Пищеварение',
-      labelEn: 'Digestion',
+      label: 'Пищеварительная система',
+      labelEn: 'Digestive system',
+      required: true,
       options: [
+        { value: 'none', label: 'Не беспокоит', labelEn: 'No issues' },
         { value: 'heartburn', label: 'Изжога', labelEn: 'Heartburn' },
         { value: 'bitterness', label: 'Горечь во рту', labelEn: 'Bitterness in the mouth' },
-        { value: 'bloating', label: 'Вздутие', labelEn: 'Bloating' },
+        { value: 'bloating', label: 'Вздутие живота', labelEn: 'Bloating' },
         { value: 'heaviness', label: 'Тяжесть в желудке', labelEn: 'Heaviness in the stomach' },
-        { value: 'gas', label: 'Газы', labelEn: 'Gas' },
+        { value: 'gas', label: 'Повышенное газообразование', labelEn: 'Excessive gas' },
         { value: 'diarrhea', label: 'Диарея', labelEn: 'Diarrhea' },
         { value: 'constipation', label: 'Запор', labelEn: 'Constipation' },
         { value: 'pancreatitis', label: 'Панкреатит', labelEn: 'Pancreatitis' },
-        { value: 'none', label: 'Нет проблем', labelEn: 'No problems' }
-      ]
+        { value: 'nausea', label: 'Тошнота', labelEn: 'Nausea' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
+      ],
+      allowOther: true,
+      otherLabel: 'Опишите проблему с пищеварением',
+      otherLabelEn: 'Describe your digestive problem'
     },
     {
       id: 'q7',
@@ -616,7 +678,8 @@ export const femaleQuestionnaire: Questionnaire = {
       label: 'Песок или камни в желчном или почках. Если есть камни, указать размер',
       labelEn: 'Sand or stones in gallbladder or kidneys. If there are stones, indicate the size',
       placeholder: 'Опишите, если есть',
-      placeholderEn: 'Describe if present, indicate size'
+      placeholderEn: 'Describe if present, indicate size',
+      required: true
     },
     {
       id: 'q8',
@@ -624,17 +687,20 @@ export const femaleQuestionnaire: Questionnaire = {
       label: 'Были ли операции (какие именно), все ли органы на месте (какой орган удален), травмы',
       labelEn: 'Have you had surgeries (which ones), are all organs in place (which organ removed), injuries',
       placeholder: 'Опишите подробно',
-      placeholderEn: 'Describe in detail'
+      placeholderEn: 'Describe in detail',
+      required: true
     },
     {
       id: 'q9',
       type: 'select',
-      label: 'Давление',
+      label: 'Артериальное давление',
       labelEn: 'Blood pressure',
+      required: true,
       options: [
-        { value: 'high', label: 'Высокое', labelEn: 'High' },
-        { value: 'low', label: 'Низкое', labelEn: 'Low' },
-        { value: 'normal', label: 'Нормальное', labelEn: 'Normal' }
+        { value: 'normal', label: 'В норме', labelEn: 'Normal' },
+        { value: 'high', label: 'Повышенное', labelEn: 'High' },
+        { value: 'low', label: 'Пониженное', labelEn: 'Low' },
+        { value: 'unstable', label: 'Нестабильное (скачет)', labelEn: 'Unstable (fluctuates)' }
       ],
       conditionalFields: [{
         condition: { fieldId: 'q9', value: 'high' },
@@ -668,13 +734,14 @@ export const femaleQuestionnaire: Questionnaire = {
       type: 'checkbox',
       label: 'Есть ли хронические или аутоиммунные заболевания',
       labelEn: 'Do you have chronic or autoimmune diseases',
+      required: true,
       options: [
+        { value: 'none', label: 'Нет', labelEn: 'None' },
         { value: 'diabetes', label: 'Диабет', labelEn: 'Diabetes' },
         { value: 'thyroiditis', label: 'Аутоиммунный тиреоидит', labelEn: 'Autoimmune thyroiditis' },
         { value: 'arthritis', label: 'Артрит', labelEn: 'Arthritis' },
         { value: 'psoriasis', label: 'Псориаз', labelEn: 'Psoriasis' },
-        { value: 'none', label: 'Нет', labelEn: 'None' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
       otherLabel: 'Укажите другие заболевания',
@@ -683,29 +750,36 @@ export const femaleQuestionnaire: Questionnaire = {
     {
       id: 'q11',
       type: 'checkbox',
-      label: 'Головные боли, мигрени, метеозависимость, сотрясение мозга, удары по голове, шум в ушах, мушки перед глазами, головокружения',
-      labelEn: 'Headaches, migraines, weather sensitivity, concussion, head injuries, tinnitus, floaters, dizziness',
+      label: 'Голова и нервная система',
+      labelEn: 'Head and nervous system',
+      required: true,
       options: [
+        { value: 'none', label: 'Не беспокоит', labelEn: 'No issues' },
         { value: 'headaches', label: 'Головные боли', labelEn: 'Headaches' },
         { value: 'migraines', label: 'Мигрени', labelEn: 'Migraines' },
         { value: 'weather', label: 'Метеозависимость', labelEn: 'Weather sensitivity' },
-        { value: 'concussion', label: 'Сотрясение мозга', labelEn: 'Concussion' },
-        { value: 'head_injury', label: 'Удары по голове', labelEn: 'Head injuries' },
+        { value: 'concussion', label: 'Было сотрясение мозга', labelEn: 'Had a concussion' },
+        { value: 'head_injury', label: 'Были удары по голове', labelEn: 'Had head injuries' },
         { value: 'tinnitus', label: 'Шум в ушах', labelEn: 'Tinnitus' },
         { value: 'floaters', label: 'Мушки перед глазами', labelEn: 'Floaters in vision' },
         { value: 'dizziness', label: 'Головокружения', labelEn: 'Dizziness' },
-        { value: 'none', label: 'Нет', labelEn: 'None' }
-      ]
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
+      ],
+      allowOther: true,
+      otherLabel: 'Опишите другие симптомы',
+      otherLabelEn: 'Describe other symptoms'
     },
     {
       id: 'q12',
       type: 'radio',
-      label: 'Онемение пальцев рук и ног, руки-ноги холодные даже летом',
-      labelEn: 'Numbness of fingers and toes, hands and feet cold even in summer',
+      label: 'Проблемы с кровообращением (онемение пальцев рук/ног, холодные конечности)',
+      labelEn: 'Circulation problems (numbness of fingers/toes, cold extremities)',
       required: true,
       options: [
-        { value: 'yes', label: 'Да', labelEn: 'Yes' },
-        { value: 'no', label: 'Нет', labelEn: 'No' }
+        { value: 'no', label: 'Нет', labelEn: 'No' },
+        { value: 'sometimes', label: 'Иногда', labelEn: 'Sometimes' },
+        { value: 'often', label: 'Часто', labelEn: 'Often' },
+        { value: 'always', label: 'Постоянно', labelEn: 'Always' }
       ]
     },
     {
@@ -714,14 +788,17 @@ export const femaleQuestionnaire: Questionnaire = {
       label: 'Варикоз (сеточка или выраженные вены), геморрой (кровоточит или нет), пигментные пятна',
       labelEn: 'Varicose veins (spider veins or pronounced veins), hemorrhoids (bleeding or not), pigment spots',
       placeholder: 'Опишите, если есть',
-      placeholderEn: 'Describe if present'
+      placeholderEn: 'Describe if present',
+      required: true
     },
     {
       id: 'q14',
       type: 'checkbox',
       label: 'Суставы',
       labelEn: 'Joints',
+      required: true,
       options: [
+        { value: 'none', label: 'Не беспокоит', labelEn: 'No issues' },
         { value: 'creaking', label: 'Скрипят', labelEn: 'Creaking' },
         { value: 'crunching', label: 'Хрустят', labelEn: 'Cracking' },
         { value: 'inflammation', label: 'Воспаляются', labelEn: 'Inflamed' },
@@ -729,8 +806,7 @@ export const femaleQuestionnaire: Questionnaire = {
         { value: 'back_pain', label: 'Боли в спине', labelEn: 'Back pain' },
         { value: 'lower_back_pain', label: 'Боли в пояснице', labelEn: 'Lower back pain' },
         { value: 'knee_pain', label: 'Боли в коленях', labelEn: 'Knee pain' },
-        { value: 'none', label: 'Нет проблем', labelEn: 'No problems' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
       otherLabel: 'Укажите другие проблемы с суставами',
@@ -742,7 +818,8 @@ export const femaleQuestionnaire: Questionnaire = {
       label: 'Кисты, полипы, миомы, опухоли, грыжи',
       labelEn: 'Cysts, polyps, fibroids, tumors, hernias',
       placeholder: 'Опишите, если есть',
-      placeholderEn: 'Describe if present'
+      placeholderEn: 'Describe if present',
+      required: true
     },
     {
       id: 'q16',
@@ -750,11 +827,13 @@ export const femaleQuestionnaire: Questionnaire = {
       label: 'Герпес, папилломы, родинки, бородавки, красные точечки на коже, выделения, цистит',
       labelEn: 'Herpes, papillomas, moles, warts, red dots on the skin, discharges, cystitis',
       placeholder: 'Опишите, если есть',
-      placeholderEn: 'Describe if present'
+      placeholderEn: 'Describe if present',
+      required: true
     },
     {
       id: 'q17',
       type: 'checkbox',
+      required: true,
       label: 'Женские дни',
       labelEn: 'Periods / women’s cycle',
       options: [
@@ -776,21 +855,28 @@ export const femaleQuestionnaire: Questionnaire = {
       label: 'Прыщи, фурункулы, акне, раздражение, розацеа, псориаз, дерматит, экзема',
       labelEn: 'Acne, boils, irritation, rosacea, psoriasis, dermatitis, eczema',
       placeholder: 'Опишите, если есть',
-      placeholderEn: 'Describe if present'
+      placeholderEn: 'Describe if present',
+      required: true
     },
     {
       id: 'q19',
       type: 'checkbox',
-      label: 'Аллергия (на пыльцу, еду, шерсть животных, пыль, лекарства)',
-      labelEn: 'Allergy (to pollen, food, animal fur, dust, medicines)',
+      label: 'Аллергические реакции',
+      labelEn: 'Allergic reactions',
+      required: true,
       options: [
-        { value: 'pollen', label: 'Пыльца', labelEn: 'Pollen' },
-        { value: 'food', label: 'Еда', labelEn: 'Food' },
-        { value: 'animals', label: 'Шерсть животных', labelEn: 'Animal fur' },
-        { value: 'dust', label: 'Пыль', labelEn: 'Dust' },
-        { value: 'medications', label: 'Лекарства', labelEn: 'Medicines' },
-        { value: 'none', label: 'Нет аллергии', labelEn: 'No allergy' }
-      ]
+        { value: 'none', label: 'Нет аллергии', labelEn: 'No allergies' },
+        { value: 'pollen', label: 'На пыльцу растений', labelEn: 'To pollen' },
+        { value: 'food', label: 'На продукты питания', labelEn: 'To food' },
+        { value: 'animals', label: 'На шерсть животных', labelEn: 'To animal fur' },
+        { value: 'dust', label: 'На пыль', labelEn: 'To dust' },
+        { value: 'medications', label: 'На лекарства', labelEn: 'To medicines' },
+        { value: 'cosmetics', label: 'На косметику', labelEn: 'To cosmetics' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
+      ],
+      allowOther: true,
+      otherLabel: 'Укажите на что аллергия',
+      otherLabelEn: 'Specify what you are allergic to'
     },
     {
       id: 'q20',
@@ -798,62 +884,87 @@ export const femaleQuestionnaire: Questionnaire = {
       label: 'Простуды',
       labelEn: 'Colds',
       placeholder: 'Сколько раз за год простужаетесь. Пользуетесь ли антибиотиками и жаропонижающими',
-      placeholderEn: 'How many times per year do you catch a cold. Do you use antibiotics and fever reducers'
+      placeholderEn: 'How many times per year do you catch a cold. Do you use antibiotics and fever reducers',
+      required: true
     },
     {
       id: 'q21',
       type: 'checkbox',
-      label: 'Сон',
-      labelEn: 'Sleep',
+      label: 'Качество сна',
+      labelEn: 'Sleep quality',
+      required: true,
       options: [
+        { value: 'no', label: 'Сплю хорошо', labelEn: 'Sleep well' },
         { value: 'hard_to_sleep', label: 'Трудно заснуть', labelEn: 'Hard to fall asleep' },
-        { value: 'wake_up_often', label: 'Часто просыпаетесь ночью', labelEn: 'Wake up often at night' },
-        { value: 'both', label: 'И то, и другое', labelEn: 'Both' },
-        { value: 'no', label: 'Нет проблем', labelEn: 'No problems' }
-      ]
+        { value: 'wake_up_often', label: 'Часто просыпаюсь ночью', labelEn: 'Wake up often at night' },
+        { value: 'early_wake', label: 'Просыпаюсь слишком рано', labelEn: 'Wake up too early' },
+        { value: 'snoring', label: 'Храп', labelEn: 'Snoring' },
+        { value: 'nightmares', label: 'Кошмары', labelEn: 'Nightmares' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
+      ],
+      allowOther: true,
+      otherLabel: 'Опишите проблему со сном',
+      otherLabelEn: 'Describe your sleep problem'
     },
     {
       id: 'q22',
       type: 'checkbox',
-      label: 'Энергия',
-      labelEn: 'Energy',
+      label: 'Уровень энергии',
+      labelEn: 'Energy level',
+      required: true,
       options: [
-        { value: 'hard_morning', label: 'С утра нужно собрать себя по кусочкам', labelEn: 'In the morning you feel broken into pieces' },
+        { value: 'no', label: 'Энергии достаточно', labelEn: 'Have enough energy' },
+        { value: 'hard_morning', label: 'С утра сложно собраться', labelEn: 'Hard to get going in the morning' },
         { value: 'very_hard_wake', label: 'Очень тяжело просыпаться', labelEn: 'Very hard to wake up' },
-        { value: 'tired_morning', label: 'Утром чувствуете себя неотдохнувшим', labelEn: 'Feel not rested in the morning' },
-        { value: 'need_coffee', label: 'Нужно стимулировать себя кофе', labelEn: 'Need coffee to stimulate yourself' },
-        { value: 'all', label: 'Все перечисленное', labelEn: 'All of the above' },
-        { value: 'no', label: 'Нет проблем', labelEn: 'No problems' }
-      ]
+        { value: 'tired_morning', label: 'Утром чувствую себя неотдохнувшей', labelEn: 'Feel not rested in the morning' },
+        { value: 'need_coffee', label: 'Нужен кофе для бодрости', labelEn: 'Need coffee to feel energized' },
+        { value: 'afternoon_slump', label: 'Упадок сил после обеда', labelEn: 'Afternoon energy slump' },
+        { value: 'chronic_fatigue', label: 'Постоянная усталость', labelEn: 'Chronic fatigue' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
+      ],
+      allowOther: true,
+      otherLabel: 'Опишите проблему с энергией',
+      otherLabelEn: 'Describe your energy problem'
     },
     {
       id: 'q23',
       type: 'checkbox',
-      label: 'Память',
-      labelEn: 'Memory',
+      label: 'Память и концентрация',
+      labelEn: 'Memory and concentration',
+      required: true,
       options: [
-        { value: 'slow', label: 'Притормаживает', labelEn: 'Slows down' },
-        { value: 'concentration', label: 'Трудно сконцентрироваться на каком-то деле', labelEn: 'Hard to concentrate on tasks' },
+        { value: 'no', label: 'Нет проблем', labelEn: 'No problems' },
+        { value: 'slow', label: 'Замедленное мышление', labelEn: 'Slow thinking' },
+        { value: 'concentration', label: 'Трудно сконцентрироваться', labelEn: 'Hard to concentrate' },
         { value: 'remember_names', label: 'Трудно вспомнить имена и события', labelEn: 'Hard to remember names and events' },
-        { value: 'remember_info', label: 'Трудно запомнить информацию', labelEn: 'Hard to remember information' },
-        { value: 'all', label: 'Все перечисленное', labelEn: 'All of the above' },
-        { value: 'no', label: 'Нет проблем', labelEn: 'No problems' }
-      ]
+        { value: 'remember_info', label: 'Трудно запомнить новую информацию', labelEn: 'Hard to remember new information' },
+        { value: 'brain_fog', label: 'Туман в голове', labelEn: 'Brain fog' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
+      ],
+      allowOther: true,
+      otherLabel: 'Опишите проблему с памятью',
+      otherLabelEn: 'Describe your memory problem'
     },
     {
       id: 'q24',
       type: 'checkbox',
-      label: 'Какой у вас образ жизни',
-      labelEn: 'What is your lifestyle like',
+      label: 'Образ жизни и физическая активность',
+      labelEn: 'Lifestyle and physical activity',
+      required: true,
       options: [
-        { value: 'sedentary', label: 'Сидячий', labelEn: 'Sedentary' },
-        { value: 'regular_sport', label: 'Занимаетесь регулярно спортом', labelEn: 'Regular sports' },
-        { value: 'home_gym', label: 'Делаете дома гимнастику', labelEn: 'Do exercises at home' },
-        { value: 'cold_water', label: 'Обливаетесь холодной водой', labelEn: 'Pour cold water / cold showers' },
-        { value: 'stressful', label: 'Работаете в стрессовых условиях', labelEn: 'Work in stressful conditions' },
-        { value: 'physical_work', label: 'Работа связана с физическими нагрузками', labelEn: 'Work involves physical activity' },
-        { value: 'toxic_substances', label: 'Вдыхаете на работе токсичные вещества (парикмахер, мастер маникюра/педикюра, строитель, регулярно дышите краской (маляр, автомаляр) и др.)', labelEn: 'Inhale toxic substances at work (hairdresser, nail master, builder, painter, etc.)' }
-      ]
+        { value: 'sedentary', label: 'Сидячий образ жизни', labelEn: 'Sedentary lifestyle' },
+        { value: 'regular_sport', label: 'Регулярные занятия спортом', labelEn: 'Regular sports' },
+        { value: 'home_gym', label: 'Делаю гимнастику дома', labelEn: 'Do exercises at home' },
+        { value: 'walking', label: 'Много хожу пешком', labelEn: 'Walk a lot' },
+        { value: 'cold_water', label: 'Закаливание (холодный душ)', labelEn: 'Cold showers / hardening' },
+        { value: 'stressful', label: 'Работа в стрессовых условиях', labelEn: 'Work in stressful conditions' },
+        { value: 'physical_work', label: 'Физически тяжёлая работа', labelEn: 'Physically demanding work' },
+        { value: 'toxic_substances', label: 'Контакт с токсичными веществами на работе', labelEn: 'Contact with toxic substances at work' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
+      ],
+      allowOther: true,
+      otherLabel: 'Опишите особенности вашего образа жизни',
+      otherLabelEn: 'Describe your lifestyle features'
     },
     {
       id: 'q25',
@@ -907,7 +1018,8 @@ export const femaleQuestionnaire: Questionnaire = {
       label: 'Что еще Вы хотели бы добавить о своем здоровье',
       labelEn: 'What else would you like to add about your health',
       placeholder: 'Дополнительная информация',
-      placeholderEn: 'Additional information'
+      placeholderEn: 'Additional information',
+      required: true
     },
     {
       id: 'q28',
@@ -977,7 +1089,8 @@ export const maleQuestionnaire: Questionnaire = {
       label: 'Если недовольны своим весом – сколько хотите убрать или добавить',
       labelEn: 'If you are not satisfied with your weight – how many kg do you want to lose or gain',
       placeholder: 'Например: хочу убрать 10 кг или добавить 5 кг',
-      placeholderEn: 'For example: I want to lose 10 kg or gain 5 kg'
+      placeholderEn: 'For example: I want to lose 10 kg or gain 5 kg',
+      required: true
     },
     {
       id: 'q2',
@@ -996,40 +1109,54 @@ export const maleQuestionnaire: Questionnaire = {
       label: 'Был ли ковид (сколько раз) или вакцина от ковид (сколько доз)',
       labelEn: 'Have you had COVID (how many times) or a COVID vaccine (how many doses)',
       placeholder: 'Опишите подробно. Были ли осложнения после ковид: выпадение волос, проблемы сердца, суставы, потеря памяти, панические атаки, ухудшение сна и т.д.',
-      placeholderEn: 'Describe in detail. Any complications after COVID: hair loss, heart problems, joints, memory loss, panic attacks, worse sleep, etc.'
+      placeholderEn: 'Describe in detail. Any complications after COVID: hair loss, heart problems, joints, memory loss, panic attacks, worse sleep, etc.',
+      required: true
     },
     {
       id: 'q4',
       type: 'checkbox',
-      label: 'Волосы',
-      labelEn: 'Hair',
+      label: 'Состояние волос',
+      labelEn: 'Hair condition',
+      required: true,
       options: [
-        { value: 'satisfied', label: 'Довольны качеством', labelEn: 'Satisfied with quality' },
-        { value: 'hair_loss', label: 'Агрессивно выпадают', labelEn: 'Severely falling out' },
+        { value: 'satisfied', label: 'Доволен качеством', labelEn: 'Satisfied with quality' },
+        { value: 'hair_loss', label: 'Сильно выпадают', labelEn: 'Severely falling out' },
+        { value: 'balding', label: 'Облысение', labelEn: 'Balding' },
         { value: 'dry', label: 'Сухие', labelEn: 'Dry' },
         { value: 'oily', label: 'Жирные', labelEn: 'Oily' },
-        { value: 'brittle', label: 'Ломкие', labelEn: 'Brittle' },
-        { value: 'none', label: 'Нет проблем', labelEn: 'No problems' }
-      ]
+        { value: 'dandruff', label: 'Перхоть', labelEn: 'Dandruff' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
+      ],
+      allowOther: true,
+      otherLabel: 'Опишите проблему с волосами',
+      otherLabelEn: 'Describe your hair problem'
     },
     {
       id: 'q5',
       type: 'checkbox',
-      label: 'Зубы',
-      labelEn: 'Teeth',
+      label: 'Состояние зубов и дёсен',
+      labelEn: 'Teeth and gums condition',
+      required: true,
       options: [
+        { value: 'none', label: 'Нет проблем', labelEn: 'No problems' },
         { value: 'crumbling', label: 'Быстро крошатся или портятся', labelEn: 'Crumbly or decaying quickly' },
         { value: 'bad_breath', label: 'Неприятный запах изо рта', labelEn: 'Bad breath' },
-        { value: 'bleeding_gums', label: 'Кровоточат десны', labelEn: 'Bleeding gums' },
-        { value: 'none', label: 'Нет проблем', labelEn: 'No problems' }
-      ]
+        { value: 'bleeding_gums', label: 'Кровоточат дёсны', labelEn: 'Bleeding gums' },
+        { value: 'sensitive', label: 'Чувствительные зубы', labelEn: 'Sensitive teeth' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
+      ],
+      allowOther: true,
+      otherLabel: 'Опишите проблему с зубами',
+      otherLabelEn: 'Describe your teeth problem'
     },
     {
       id: 'q6',
       type: 'checkbox',
       label: 'Пищеварение',
       labelEn: 'Digestion',
+      required: true,
       options: [
+        { value: 'none', label: 'Не беспокоит', labelEn: 'No issues' },
         { value: 'heartburn', label: 'Изжога', labelEn: 'Heartburn' },
         { value: 'bitterness', label: 'Горечь во рту', labelEn: 'Bitterness in the mouth' },
         { value: 'bloating', label: 'Вздутие', labelEn: 'Bloating' },
@@ -1038,8 +1165,7 @@ export const maleQuestionnaire: Questionnaire = {
         { value: 'diarrhea', label: 'Диарея', labelEn: 'Diarrhea' },
         { value: 'constipation', label: 'Запор', labelEn: 'Constipation' },
         { value: 'pancreatitis', label: 'Панкреатит', labelEn: 'Pancreatitis' },
-        { value: 'none', label: 'Не беспокоит', labelEn: 'No issues' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
       otherLabel: 'Укажите другие проблемы с пищеварением',
@@ -1048,35 +1174,39 @@ export const maleQuestionnaire: Questionnaire = {
     {
       id: 'q7',
       type: 'textarea',
-      label: 'Песок или камни в желчном или почках. Если есть камни, указать размер',
-      labelEn: 'Sand or stones in gallbladder or kidneys. If there are stones, indicate the size',
-      placeholder: 'Опишите, если есть',
-      placeholderEn: 'Describe if present, indicate size'
+      label: 'Песок или камни в желчном или почках',
+      labelEn: 'Sand or stones in gallbladder or kidneys',
+      placeholder: 'Опишите, если есть. Укажите размер камней',
+      placeholderEn: 'Describe if present. Indicate the size of stones',
+      required: true
     },
     {
       id: 'q8',
       type: 'textarea',
-      label: 'Были ли операции (какие именно), все ли органы на месте (какой орган удален), травмы',
-      labelEn: 'Have you had surgeries (which ones), are all organs in place (which organ removed), injuries',
-      placeholder: 'Опишите подробно',
-      placeholderEn: 'Describe in detail'
+      label: 'Операции и травмы',
+      labelEn: 'Surgeries and injuries',
+      placeholder: 'Опишите: какие операции были, все ли органы на месте, какие травмы',
+      placeholderEn: 'Describe: what surgeries, are all organs in place, what injuries',
+      required: true
     },
     {
       id: 'q9',
       type: 'select',
-      label: 'Давление',
+      label: 'Артериальное давление',
       labelEn: 'Blood pressure',
+      required: true,
       options: [
-        { value: 'high', label: 'Высокое', labelEn: 'High' },
-        { value: 'low', label: 'Низкое', labelEn: 'Low' },
-        { value: 'normal', label: 'Нормальное', labelEn: 'Normal' }
+        { value: 'normal', label: 'В норме', labelEn: 'Normal' },
+        { value: 'high', label: 'Повышенное', labelEn: 'High' },
+        { value: 'low', label: 'Пониженное', labelEn: 'Low' },
+        { value: 'unstable', label: 'Нестабильное (скачет)', labelEn: 'Unstable (fluctuates)' }
       ],
       conditionalFields: [{
         condition: { fieldId: 'q9', value: 'high' },
         fields: [{
           id: 'q9_meds',
           type: 'radio',
-          label: 'Пьете ли лекарства от давления',
+          label: 'Принимаете ли препараты от давления',
           labelEn: 'Do you take blood pressure medication',
           required: true,
           options: [
@@ -1086,8 +1216,8 @@ export const maleQuestionnaire: Questionnaire = {
         }, {
           id: 'q9_meds_duration',
           type: 'text',
-          label: 'Как долго принимаете лекарства',
-          labelEn: 'How long have you been taking the medication',
+          label: 'Как долго принимаете',
+          labelEn: 'How long have you been taking them',
           placeholder: 'Например: 3 года',
           placeholderEn: 'For example: 3 years',
           required: true,
@@ -1101,15 +1231,18 @@ export const maleQuestionnaire: Questionnaire = {
     {
       id: 'q10',
       type: 'checkbox',
-      label: 'Есть ли хронические или аутоиммунные заболевания',
-      labelEn: 'Do you have chronic or autoimmune diseases',
+      label: 'Хронические или аутоиммунные заболевания',
+      labelEn: 'Chronic or autoimmune diseases',
+      required: true,
       options: [
-        { value: 'diabetes', label: 'Диабет', labelEn: 'Diabetes' },
+        { value: 'none', label: 'Нет', labelEn: 'None' },
+        { value: 'diabetes', label: 'Сахарный диабет', labelEn: 'Diabetes' },
         { value: 'thyroiditis', label: 'Аутоиммунный тиреоидит', labelEn: 'Autoimmune thyroiditis' },
+        { value: 'hypothyroidism', label: 'Гипотиреоз', labelEn: 'Hypothyroidism' },
         { value: 'arthritis', label: 'Артрит', labelEn: 'Arthritis' },
         { value: 'psoriasis', label: 'Псориаз', labelEn: 'Psoriasis' },
-        { value: 'none', label: 'Нет', labelEn: 'None' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'asthma', label: 'Астма', labelEn: 'Asthma' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
       otherLabel: 'Укажите другие заболевания',
@@ -1118,23 +1251,24 @@ export const maleQuestionnaire: Questionnaire = {
     {
       id: 'q11',
       type: 'checkbox',
-      label: 'Головные боли, мигрени, метеозависимость, сотрясение мозга, удары по голове, шум в ушах, мушки перед глазами, головокружения',
-      labelEn: 'Headaches, migraines, weather sensitivity, concussion, head injuries, tinnitus, floaters, dizziness',
+      label: 'Голова и нервная система',
+      labelEn: 'Head and nervous system',
+      required: true,
       options: [
+        { value: 'none', label: 'Не беспокоит', labelEn: 'No issues' },
         { value: 'headaches', label: 'Головные боли', labelEn: 'Headaches' },
         { value: 'migraines', label: 'Мигрени', labelEn: 'Migraines' },
         { value: 'weather', label: 'Метеозависимость', labelEn: 'Weather sensitivity' },
-        { value: 'concussion', label: 'Сотрясение мозга', labelEn: 'Concussion' },
-        { value: 'head_injury', label: 'Удары по голове', labelEn: 'Head injuries' },
+        { value: 'concussion', label: 'Было сотрясение мозга', labelEn: 'Had a concussion' },
+        { value: 'head_injury', label: 'Были удары по голове', labelEn: 'Had head injuries' },
         { value: 'tinnitus', label: 'Шум в ушах', labelEn: 'Tinnitus' },
         { value: 'floaters', label: 'Мушки перед глазами', labelEn: 'Floaters in vision' },
         { value: 'dizziness', label: 'Головокружения', labelEn: 'Dizziness' },
-        { value: 'none', label: 'Не беспокоит', labelEn: 'Does not bother' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
-      otherLabel: 'Укажите другие проблемы',
-      otherLabelEn: 'Please describe other problems'
+      otherLabel: 'Опишите другие симптомы',
+      otherLabelEn: 'Describe other symptoms'
     },
     {
       id: 'q12',
@@ -1155,14 +1289,17 @@ export const maleQuestionnaire: Questionnaire = {
       label: 'Варикоз (сеточка или выраженные вены), геморрой (кровоточит или нет), пигментные пятна',
       labelEn: 'Varicose veins (spider veins or pronounced veins), hemorrhoids (bleeding or not), pigment spots',
       placeholder: 'Опишите, если есть',
-      placeholderEn: 'Describe if present'
+      placeholderEn: 'Describe if present',
+      required: true
     },
     {
       id: 'q14',
       type: 'checkbox',
       label: 'Суставы',
       labelEn: 'Joints',
+      required: true,
       options: [
+        { value: 'none', label: 'Не беспокоит', labelEn: 'No issues' },
         { value: 'creaking', label: 'Скрипят', labelEn: 'Creaking' },
         { value: 'crunching', label: 'Хрустят', labelEn: 'Cracking' },
         { value: 'inflammation', label: 'Воспаляются', labelEn: 'Inflamed' },
@@ -1170,8 +1307,7 @@ export const maleQuestionnaire: Questionnaire = {
         { value: 'back_pain', label: 'Боли в спине', labelEn: 'Back pain' },
         { value: 'lower_back_pain', label: 'Боли в пояснице', labelEn: 'Lower back pain' },
         { value: 'knee_pain', label: 'Боли в коленях', labelEn: 'Knee pain' },
-        { value: 'none', label: 'Нет проблем', labelEn: 'No problems' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
       otherLabel: 'Укажите другие проблемы с суставами',
@@ -1183,7 +1319,8 @@ export const maleQuestionnaire: Questionnaire = {
       label: 'Кисты, полипы, миомы, опухоли, грыжи',
       labelEn: 'Cysts, polyps, tumors, hernias',
       placeholder: 'Опишите, если есть',
-      placeholderEn: 'Describe if present'
+      placeholderEn: 'Describe if present',
+      required: true
     },
     {
       id: 'q16',
@@ -1191,7 +1328,8 @@ export const maleQuestionnaire: Questionnaire = {
       label: 'Герпес, папилломы, родинки, бородавки, красные точечки на коже, выделения, цистит',
       labelEn: 'Herpes, papillomas, moles, warts, red dots on skin, discharges, cystitis',
       placeholder: 'Опишите, если есть',
-      placeholderEn: 'Describe if present'
+      placeholderEn: 'Describe if present',
+      required: true
     },
     {
       id: 'q17',
@@ -1199,7 +1337,8 @@ export const maleQuestionnaire: Questionnaire = {
       label: 'Простатит',
       labelEn: 'Prostatitis',
       placeholder: 'Опишите, если есть проблемы',
-      placeholderEn: 'Describe if you have problems'
+      placeholderEn: 'Describe if you have problems',
+      required: true
     },
     {
       id: 'q18',
@@ -1207,21 +1346,23 @@ export const maleQuestionnaire: Questionnaire = {
       label: 'Прыщи, фурункулы, акне, раздражение, розацеа, псориаз, дерматит, экзема',
       labelEn: 'Acne, boils, irritation, rosacea, psoriasis, dermatitis, eczema',
       placeholder: 'Опишите, если есть',
-      placeholderEn: 'Describe if present'
+      placeholderEn: 'Describe if present',
+      required: true
     },
     {
       id: 'q19',
       type: 'checkbox',
       label: 'Аллергия (на пыльцу, еду, шерсть животных, пыль, лекарства)',
       labelEn: 'Allergy (to pollen, food, animal fur, dust, medicines)',
+      required: true,
       options: [
+        { value: 'none', label: 'Нет аллергии', labelEn: 'No allergy' },
         { value: 'pollen', label: 'Пыльца', labelEn: 'Pollen' },
         { value: 'food', label: 'Еда', labelEn: 'Food' },
         { value: 'animals', label: 'Шерсть животных', labelEn: 'Animal fur' },
         { value: 'dust', label: 'Пыль', labelEn: 'Dust' },
         { value: 'medications', label: 'Лекарства', labelEn: 'Medicines' },
-        { value: 'none', label: 'Нет аллергии', labelEn: 'No allergy' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
       otherLabel: 'Укажите другие виды аллергии',
@@ -1233,78 +1374,87 @@ export const maleQuestionnaire: Questionnaire = {
       label: 'Простуды',
       labelEn: 'Colds',
       placeholder: 'Сколько раз за год простужаетесь. Пользуетесь ли антибиотиками и жаропонижающими',
-      placeholderEn: 'How many times per year do you catch a cold. Do you use antibiotics and fever reducers'
+      placeholderEn: 'How many times per year do you catch a cold. Do you use antibiotics and fever reducers',
+      required: true
     },
     {
       id: 'q21',
       type: 'checkbox',
-      label: 'Сон',
-      labelEn: 'Sleep',
+      label: 'Качество сна',
+      labelEn: 'Sleep quality',
+      required: true,
       options: [
+        { value: 'no', label: 'Сплю хорошо', labelEn: 'Sleep well' },
         { value: 'hard_to_sleep', label: 'Трудно заснуть', labelEn: 'Hard to fall asleep' },
-        { value: 'wake_up_often', label: 'Часто просыпаетесь ночью', labelEn: 'Wake up often at night' },
-        { value: 'both', label: 'И то, и другое', labelEn: 'Both' },
-        { value: 'no', label: 'Не беспокоит', labelEn: 'No issues' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'wake_up_often', label: 'Часто просыпаюсь ночью', labelEn: 'Wake up often at night' },
+        { value: 'early_wake', label: 'Просыпаюсь слишком рано', labelEn: 'Wake up too early' },
+        { value: 'snoring', label: 'Храп', labelEn: 'Snoring' },
+        { value: 'apnea', label: 'Апноэ (остановки дыхания)', labelEn: 'Sleep apnea' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
-      otherLabel: 'Укажите другие проблемы со сном',
-      otherLabelEn: 'Please describe other sleep issues'
+      otherLabel: 'Опишите проблему со сном',
+      otherLabelEn: 'Describe your sleep problem'
     },
     {
       id: 'q22',
       type: 'checkbox',
-      label: 'Энергия',
-      labelEn: 'Energy',
+      label: 'Уровень энергии',
+      labelEn: 'Energy level',
+      required: true,
       options: [
-        { value: 'hard_morning', label: 'С утра нужно собрать себя по кусочкам', labelEn: 'In the morning you feel broken into pieces' },
+        { value: 'no', label: 'Энергии достаточно', labelEn: 'Have enough energy' },
+        { value: 'hard_morning', label: 'С утра сложно собраться', labelEn: 'Hard to get going in the morning' },
         { value: 'very_hard_wake', label: 'Очень тяжело просыпаться', labelEn: 'Very hard to wake up' },
-        { value: 'tired_morning', label: 'Утром чувствуете себя неотдохнувшим', labelEn: 'Feel not rested in the morning' },
-        { value: 'need_coffee', label: 'Нужно стимулировать себя кофе', labelEn: 'Need coffee to stimulate yourself' },
-        { value: 'all', label: 'Все перечисленное', labelEn: 'All of the above' },
-        { value: 'no', label: 'Не беспокоит', labelEn: 'No issues' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'tired_morning', label: 'Утром чувствую себя неотдохнувшим', labelEn: 'Feel not rested in the morning' },
+        { value: 'need_coffee', label: 'Нужен кофе для бодрости', labelEn: 'Need coffee to feel energized' },
+        { value: 'afternoon_slump', label: 'Упадок сил после обеда', labelEn: 'Afternoon energy slump' },
+        { value: 'chronic_fatigue', label: 'Постоянная усталость', labelEn: 'Chronic fatigue' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
-      otherLabel: 'Укажите другие проблемы с энергией',
-      otherLabelEn: 'Please describe other energy issues'
+      otherLabel: 'Опишите проблему с энергией',
+      otherLabelEn: 'Describe your energy problem'
     },
     {
       id: 'q23',
       type: 'checkbox',
-      label: 'Память',
-      labelEn: 'Memory',
+      label: 'Память и концентрация',
+      labelEn: 'Memory and concentration',
+      required: true,
       options: [
-        { value: 'slow', label: 'Притормаживает', labelEn: 'Slows down' },
-        { value: 'concentration', label: 'Трудно сконцентрироваться на каком-то деле', labelEn: 'Hard to concentrate on tasks' },
+        { value: 'no', label: 'Нет проблем', labelEn: 'No problems' },
+        { value: 'slow', label: 'Замедленное мышление', labelEn: 'Slow thinking' },
+        { value: 'concentration', label: 'Трудно сконцентрироваться', labelEn: 'Hard to concentrate' },
         { value: 'remember_names', label: 'Трудно вспомнить имена и события', labelEn: 'Hard to remember names and events' },
-        { value: 'remember_info', label: 'Трудно запомнить информацию', labelEn: 'Hard to remember information' },
-        { value: 'all', label: 'Все перечисленное', labelEn: 'All of the above' },
-        { value: 'no', label: 'Не беспокоит', labelEn: 'Does not bother' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'remember_info', label: 'Трудно запомнить новую информацию', labelEn: 'Hard to remember new information' },
+        { value: 'brain_fog', label: 'Туман в голове', labelEn: 'Brain fog' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
-      otherLabel: 'Укажите другие проблемы с памятью',
-      otherLabelEn: 'Please describe other memory issues'
+      otherLabel: 'Опишите проблему с памятью',
+      otherLabelEn: 'Describe your memory problem'
     },
     {
       id: 'q24',
       type: 'checkbox',
-      label: 'Какой у вас образ жизни',
-      labelEn: 'What is your lifestyle like',
+      label: 'Образ жизни и физическая активность',
+      labelEn: 'Lifestyle and physical activity',
+      required: true,
       options: [
-        { value: 'sedentary', label: 'Сидячий', labelEn: 'Sedentary' },
-        { value: 'regular_sport', label: 'Регулярно занимаетесь спортом', labelEn: 'Regular sports' },
-        { value: 'home_gym', label: 'Делаете дома гимнастику', labelEn: 'Do exercises at home' },
-        { value: 'cold_water', label: 'Обливаетесь холодной водой', labelEn: 'Pour cold water / cold showers' },
-        { value: 'stressful', label: 'Работаете в стрессовых условиях', labelEn: 'Work in stressful conditions' },
-        { value: 'physical_work', label: 'Работа связана с физическими нагрузками', labelEn: 'Work involves physical activity' },
-        { value: 'toxic_substances', label: 'Вдыхаете токсичные вещества на работе', labelEn: 'Inhale toxic substances at work' },
-        { value: 'other', label: 'Другое', labelEn: 'Other', hasOther: true }
+        { value: 'sedentary', label: 'Сидячий образ жизни', labelEn: 'Sedentary lifestyle' },
+        { value: 'regular_sport', label: 'Регулярные занятия спортом', labelEn: 'Regular sports' },
+        { value: 'home_gym', label: 'Делаю гимнастику дома', labelEn: 'Do exercises at home' },
+        { value: 'walking', label: 'Много хожу пешком', labelEn: 'Walk a lot' },
+        { value: 'cold_water', label: 'Закаливание (холодный душ)', labelEn: 'Cold showers / hardening' },
+        { value: 'stressful', label: 'Работа в стрессовых условиях', labelEn: 'Work in stressful conditions' },
+        { value: 'physical_work', label: 'Физически тяжёлая работа', labelEn: 'Physically demanding work' },
+        { value: 'toxic_substances', label: 'Контакт с токсичными веществами на работе', labelEn: 'Contact with toxic substances at work' },
+        { value: 'other', label: 'Свой вариант', labelEn: 'Other', hasOther: true }
       ],
       allowOther: true,
-      otherLabel: 'Укажите другие особенности образа жизни',
-      otherLabelEn: 'Please describe other lifestyle features'
+      otherLabel: 'Опишите особенности вашего образа жизни',
+      otherLabelEn: 'Describe your lifestyle features'
     },
     {
       id: 'q25',
@@ -1358,7 +1508,8 @@ export const maleQuestionnaire: Questionnaire = {
       label: 'Что еще Вы хотели бы добавить о своем здоровье',
       labelEn: 'What else would you like to add about your health',
       placeholder: 'Дополнительная информация',
-      placeholderEn: 'Additional information'
+      placeholderEn: 'Additional information',
+      required: true
     },
     {
       id: 'q28',

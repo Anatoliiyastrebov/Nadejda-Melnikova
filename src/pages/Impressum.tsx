@@ -14,7 +14,6 @@ export const Impressum = () => {
           <img src="/logo.svg" alt="Wellness Logo" className="header-logo" />
         </Link>
         <div className="impressum-header-right">
-          <Link to="/" className="back-link">← {t('impressum.back', lang)}</Link>
           <LanguageSwitcher />
         </div>
       </header>
@@ -54,11 +53,6 @@ export const Impressum = () => {
           <p>{t('impressum.rightsText', lang)}</p>
         </section>
         
-        <div className="impressum-footer">
-          <Link to="/" className="home-link">
-            {t('impressum.back', lang)}
-          </Link>
-        </div>
       </main>
     </div>
   );

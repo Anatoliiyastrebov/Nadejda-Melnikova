@@ -385,19 +385,27 @@ export async function sendToTelegram(
       }
     }
 
-    // Генерируем PDF и добавляем к отправке
-    const pdfFile = await generateQuestionnairePDF(questionnaireId, formData);
-    const pdfValidation = validateUploadFile(pdfFile);
-    if (!pdfValidation.valid) {
-      console.error('Generated PDF failed validation:', pdfValidation.reason);
-      return false;
+    // Генерируем PDF и добавляем к отправке (если получится)
+    let pdfFile: File | null = null;
+    try {
+      const generatedPdf = await generateQuestionnairePDF(questionnaireId, formData);
+      const pdfValidation = validateUploadFile(generatedPdf);
+      if (pdfValidation.valid) {
+        pdfFile = generatedPdf;
+      } else {
+        console.error('Generated PDF failed validation:', pdfValidation.reason);
+      }
+    } catch (pdfError) {
+      console.error('PDF generation failed, continue without PDF attachment:', pdfError);
     }
 
     const submitFormData = new FormData();
     submitFormData.append('questionnaireId', questionnaireId);
     submitFormData.append('message', message);
     submitFormData.append('payload', exportToJSON(questionnaireId, formData));
-    submitFormData.append('pdf', pdfFile, pdfFile.name);
+    if (pdfFile) {
+      submitFormData.append('pdf', pdfFile, pdfFile.name);
+    }
 
     uploadedFiles.forEach((file, index) => {
       submitFormData.append(`file_${index}`, file, file.name);
@@ -407,7 +415,7 @@ export async function sendToTelegram(
       console.log('[DEBUG_UPLOAD] form received on client', {
         questionnaireId,
         uploadedFiles: uploadedFiles.map((f) => ({ name: f.name, size: f.size, type: f.type })),
-        pdf: { name: pdfFile.name, size: pdfFile.size }
+        pdf: pdfFile ? { name: pdfFile.name, size: pdfFile.size } : null
       });
     }
 

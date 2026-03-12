@@ -36,18 +36,6 @@
   gap: 16px;
 }
 
-.back-link {
-  color: #6b7d6b;
-  text-decoration: none;
-  font-size: 14px;
-  transition: color 0.3s ease;
-}
-
-.back-link:hover {
-  color: #4a5a4a;
-  text-decoration: underline;
-}
-
 .impressum-content {
   max-width: 800px;
   margin: 0 auto;
@@ -87,27 +75,6 @@
 .impressum-section strong {
   color: #4a5a4a;
   font-weight: 600;
-}
-
-.impressum-footer {
-  text-align: center;
-  margin-top: 40px;
-}
-
-.home-link {
-  display: inline-block;
-  padding: 14px 32px;
-  background: linear-gradient(135deg, #a8c5a8 0%, #6b7d6b 100%);
-  color: #fff;
-  text-decoration: none;
-  border-radius: 8px;
-  font-weight: 600;
-  transition: all 0.3s ease;
-}
-
-.home-link:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(107, 125, 107, 0.3);
 }
 
 @media (max-width: 768px) {

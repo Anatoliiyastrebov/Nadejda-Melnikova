@@ -72,17 +72,30 @@ function isFileAllowed(fileName) {
 
 async function sendTelegramMessage(text) {
   const url = `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`;
-  const response = await axios.post(
-    url,
-    {
-      chat_id: CHAT_ID,
-      text
-    },
-    {
-      timeout: TELEGRAM_TIMEOUT_MS
-    }
-  );
-  return response.data;
+  const safeText = String(text || '').trim();
+  if (!safeText) return null;
+
+  // Telegram message limit: 4096 chars
+  const chunkSize = 3500;
+  const chunks = safeText.length > chunkSize
+    ? safeText.match(new RegExp(`.{1,${chunkSize}}`, 'g')) || []
+    : [safeText];
+
+  let lastResponse = null;
+  for (const chunk of chunks) {
+    const response = await axios.post(
+      url,
+      {
+        chat_id: CHAT_ID,
+        text: chunk
+      },
+      {
+        timeout: TELEGRAM_TIMEOUT_MS
+      }
+    );
+    lastResponse = response.data;
+  }
+  return lastResponse;
 }
 
 async function sendDocumentWithRetry(filePath, caption, fileName) {
@@ -141,10 +154,6 @@ app.post('/api/submit', async (req, res) => {
     logDebug('request body keys', Object.keys(req.body || {}));
 
     const incomingFiles = getFilesFromRequest(req);
-    if (!incomingFiles.length) {
-      console.error('File missing in request');
-      return res.status(400).json({ error: 'File not uploaded' });
-    }
 
     const savedFiles = [];
     for (const file of incomingFiles) {
@@ -188,8 +197,12 @@ app.post('/api/submit', async (req, res) => {
     }
 
     const textMessage = req.body?.message || 'Новая анкета получена';
-    const textResponse = await sendTelegramMessage(textMessage);
-    logDebug('telegram text response', textResponse);
+    try {
+      const textResponse = await sendTelegramMessage(textMessage);
+      logDebug('telegram text response', textResponse);
+    } catch (textError) {
+      console.error('Text message send failed, continuing with file pipeline:', textError?.response?.data || textError);
+    }
 
     const sendResults = [];
     for (const file of savedFiles) {
@@ -209,7 +222,7 @@ app.post('/api/submit', async (req, res) => {
     const failed = sendResults.filter((r) => !r.ok);
     console.log('telegram response', { total: sendResults.length, failed: failed.length });
 
-    if (failed.length > 0) {
+    if (failed.length > 0 && sendResults.length > 0) {
       return res.status(207).json({
         ok: false,
         partial: true,
@@ -218,10 +231,13 @@ app.post('/api/submit', async (req, res) => {
       });
     }
 
-    return res.json({ ok: true, sent: sendResults.length });
+    return res.json({ ok: true, sent: sendResults.length, filesReceived: incomingFiles.length });
   } catch (error) {
     console.error('upload pipeline error', error?.response?.data || error);
-    return res.status(500).json({ error: 'Internal upload pipeline error' });
+    return res.status(500).json({
+      error: 'Internal upload pipeline error',
+      details: DEBUG_UPLOAD ? String(error?.message || error) : undefined
+    });
   } finally {
     for (const filePath of tempFilesToCleanup) {
       try {

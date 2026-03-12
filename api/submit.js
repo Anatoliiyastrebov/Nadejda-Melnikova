@@ -70,12 +70,25 @@ function isFileAllowed(fileName) {
 }
 
 async function sendMessage(text) {
-  const response = await axios.post(
-    `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
-    { chat_id: CHAT_ID, text },
-    { timeout: TELEGRAM_TIMEOUT_MS }
-  );
-  return response.data;
+  const safeText = String(text || '').trim();
+  if (!safeText) return null;
+
+  // Telegram message limit: 4096 chars
+  const chunkSize = 3500;
+  const chunks = safeText.length > chunkSize
+    ? safeText.match(new RegExp(`.{1,${chunkSize}}`, 'g')) || []
+    : [safeText];
+
+  let lastResponse = null;
+  for (const chunk of chunks) {
+    const response = await axios.post(
+      `https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`,
+      { chat_id: CHAT_ID, text: chunk },
+      { timeout: TELEGRAM_TIMEOUT_MS }
+    );
+    lastResponse = response.data;
+  }
+  return lastResponse;
 }
 
 async function sendDocumentWithRetry(filePath, fileName, caption) {
@@ -130,11 +143,6 @@ export default async function handler(req, res) {
     const { fields, files } = await parseMultipart(req);
     const incomingFiles = normalizeFiles(files);
 
-    if (!incomingFiles.length) {
-      console.error('File missing in request');
-      return res.status(400).json({ error: 'File not uploaded' });
-    }
-
     const validatedFiles = [];
     for (const uploadedFile of incomingFiles) {
       if (!uploadedFile?.filepath || !uploadedFile?.originalFilename) {
@@ -161,7 +169,11 @@ export default async function handler(req, res) {
     }
 
     const message = Array.isArray(fields.message) ? fields.message[0] : fields.message;
-    await sendMessage(message || 'Новая анкета получена');
+    try {
+      await sendMessage(message || 'Новая анкета получена');
+    } catch (textError) {
+      console.error('Text message send failed, continuing with file pipeline:', textError?.response?.data || textError);
+    }
 
     const failed = [];
     for (const file of validatedFiles) {
@@ -176,14 +188,17 @@ export default async function handler(req, res) {
       }
     }
 
-    if (failed.length > 0) {
+    if (failed.length > 0 && validatedFiles.length > 0) {
       return res.status(207).json({ ok: false, failed });
     }
 
-    return res.status(200).json({ ok: true, sent: validatedFiles.length });
+    return res.status(200).json({ ok: true, sent: validatedFiles.length, filesReceived: incomingFiles.length });
   } catch (error) {
     console.error('upload pipeline error', error?.response?.data || error);
-    return res.status(500).json({ error: 'Internal upload pipeline error' });
+    return res.status(500).json({
+      error: 'Internal upload pipeline error',
+      details: DEBUG_UPLOAD ? String(error?.message || error) : undefined
+    });
   } finally {
     for (const filePath of filesToCleanup) {
       try {
