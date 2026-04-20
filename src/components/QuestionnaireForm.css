@@ -686,3 +686,187 @@
   }
 }
 
+/* Premium minimal refinement overrides */
+.form-container {
+  background: var(--bg);
+}
+
+.form-container::before,
+.form-container::after {
+  display: none;
+}
+
+.form-header {
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.header-logo {
+  filter: none;
+}
+
+.form-content {
+  max-width: 920px;
+  padding: 56px 32px 64px;
+}
+
+.form-title-section {
+  margin-bottom: 48px;
+}
+
+.form-title-section h1 {
+  font-size: 44px;
+  color: var(--text);
+  background: none;
+  -webkit-text-fill-color: var(--text);
+  letter-spacing: -0.02em;
+}
+
+.questionnaire-form {
+  background: var(--surface);
+  border-radius: 18px;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-soft);
+  padding: 40px;
+}
+
+.questionnaire-form::before {
+  display: none;
+}
+
+.question-field {
+  margin-bottom: 36px;
+}
+
+.question-label {
+  color: var(--text);
+  font-size: 17px;
+  margin-bottom: 10px;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface-soft);
+  color: var(--text);
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 4px rgba(0, 113, 227, 0.12);
+  transform: none;
+}
+
+.radio-label,
+.checkbox-label {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface-soft);
+}
+
+.radio-label:hover,
+.checkbox-label:hover {
+  background: #f2f2f4;
+  border-color: #b9b9bf;
+}
+
+.radio-label input[type="radio"],
+.checkbox-label input[type="checkbox"] {
+  accent-color: var(--accent);
+}
+
+.file-label {
+  background: var(--surface-soft);
+  border: 1px dashed #b6b6bd;
+  color: var(--text-muted);
+}
+
+.file-label:hover {
+  background: #f2f2f4;
+  border-color: var(--accent);
+  transform: none;
+  box-shadow: none;
+}
+
+.file-item {
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+}
+
+.file-item:hover {
+  transform: none;
+  border-color: #b9b9bf;
+}
+
+.contact-field {
+  background: #f8f8fa;
+  border: 1px solid var(--border);
+}
+
+.contact-field::before {
+  background: var(--accent);
+  height: 2px;
+}
+
+.contact-field .question-label {
+  color: var(--text);
+}
+
+.contact-section {
+  background: #f8f8fa;
+  border: 1px solid var(--border);
+  box-shadow: none;
+}
+
+.contact-section-header h3 {
+  color: var(--text);
+}
+
+.contact-section-header p {
+  color: var(--text-muted);
+}
+
+.optional-contacts-btn {
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 10px;
+}
+
+.optional-contacts-btn:hover {
+  background: #f2f2f4;
+  transform: none;
+}
+
+.consent-section {
+  background: #f8f8fa;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+}
+
+.submit-btn {
+  background: var(--text);
+  color: #fff;
+  border-radius: 12px;
+}
+
+.submit-btn:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.18);
+}
+
+.submit-btn::before {
+  display: none;
+}
+
+.field-hint.hint-success {
+  color: #1f7a3d;
+  background: rgba(31, 122, 61, 0.08);
+  border: 1px solid rgba(31, 122, 61, 0.16);
+}
+

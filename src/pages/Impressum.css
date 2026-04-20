@@ -1,16 +1,16 @@
 .impressum-page {
   min-height: 100vh;
-  background: linear-gradient(135deg, #faf8f5 0%, #f0ebe5 100%);
+  background: var(--bg);
 }
 
 .impressum-header {
-  padding: 20px 32px;
+  padding: 18px 36px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.94);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid #e8e0d8;
+  border-bottom: 1px solid var(--border);
 }
 
 .logo-link {
@@ -21,13 +21,13 @@
 }
 
 .logo-link:hover {
-  transform: scale(1.05);
+  transform: translateY(-1px);
 }
 
 .header-logo {
   height: 50px;
   width: auto;
-  filter: drop-shadow(0 2px 4px rgba(107, 125, 107, 0.2));
+  filter: none;
 }
 
 .impressum-header-right {
@@ -39,46 +39,47 @@
 .impressum-content {
   max-width: 800px;
   margin: 0 auto;
-  padding: 60px 32px;
+  padding: 64px 40px 72px;
 }
 
 .impressum-content h1 {
-  font-size: 42px;
-  color: #4a5a4a;
-  margin: 0 0 40px 0;
+  font-size: 44px;
+  color: var(--text);
+  margin: 0 0 44px 0;
   text-align: center;
   font-weight: 600;
 }
 
 .impressum-section {
-  background: #fff;
-  border-radius: 12px;
-  padding: 32px;
-  margin-bottom: 24px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  background: var(--surface);
+  border-radius: 16px;
+  padding: 34px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-soft);
+  border: 1px solid var(--border);
 }
 
 .impressum-section h2 {
-  font-size: 24px;
-  color: #6b7d6b;
+  font-size: 25px;
+  color: var(--text);
   margin: 0 0 16px 0;
   font-weight: 600;
 }
 
 .impressum-section p {
   font-size: 16px;
-  color: #4a5a4a;
-  line-height: 1.8;
-  margin: 12px 0;
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin: 10px 0;
 }
 
 .impressum-section strong {
-  color: #4a5a4a;
+  color: var(--text);
   font-weight: 600;
 }
 
 .impressum-section a {
-  color: #4a7b5b;
+  color: var(--accent);
   font-weight: 600;
   text-decoration: none;
 }
