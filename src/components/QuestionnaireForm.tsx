@@ -17,6 +17,7 @@ export const QuestionnaireForm: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [consent, setConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [showOptionalContacts, setShowOptionalContacts] = useState(false);
   
   useEffect(() => {
     if (id) {
@@ -139,6 +140,13 @@ export const QuestionnaireForm: React.FC = () => {
       if (question.id === 'contact_telegram' && formData[question.id]) {
         if (!validateTelegram(formData[question.id])) {
           newErrors[question.id] = t('common.invalidTelegram', lang);
+        }
+      }
+
+      // Валидация телефона
+      if (question.id === 'contact_phone' && formData[question.id]) {
+        if (!validatePhone(formData[question.id])) {
+          newErrors[question.id] = t('common.invalidPhone', lang);
         }
       }
       
@@ -287,19 +295,42 @@ export const QuestionnaireForm: React.FC = () => {
         </div>
         
         <form className="questionnaire-form" onSubmit={handleSubmit} encType="multipart/form-data">
-          {allQuestions.map(question => (
-            <QuestionFieldComponent
-              key={question.id}
-              question={question}
-              value={formData[question.id]}
-              onChange={(value) => handleInputChange(question.id, value)}
-              onFieldChange={handleInputChange}
-              formData={formData}
-              errors={errors}
-              error={errors[question.id]}
-              lang={lang}
-            />
-          ))}
+          {allQuestions.map(question => {
+            const isOptionalContact =
+              question.id === 'contact_telegram' || question.id === 'contact_instagram';
+
+            if (isOptionalContact && !showOptionalContacts) {
+              return null;
+            }
+
+            return (
+              <QuestionFieldComponent
+                key={question.id}
+                question={question}
+                value={formData[question.id]}
+                onChange={(value) => handleInputChange(question.id, value)}
+                onFieldChange={handleInputChange}
+                formData={formData}
+                errors={errors}
+                error={errors[question.id]}
+                lang={lang}
+              />
+            );
+          })}
+
+          {!showOptionalContacts && (
+            <div className="optional-contacts-toggle">
+              <button
+                type="button"
+                className="optional-contacts-btn"
+                onClick={() => setShowOptionalContacts(true)}
+              >
+                {lang === 'en'
+                  ? 'Add Telegram / Instagram (optional)'
+                  : 'Добавить Telegram / Instagram (необязательно)'}
+              </button>
+            </div>
+          )}
           
           <div className="consent-section" id="consent-checkbox">
             <label className="consent-label">
@@ -365,6 +396,7 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
   const renderField = () => {
     switch (question.type) {
       case 'text':
+        const isPhoneField = question.id === 'contact_phone';
         const isTelegramField = question.id === 'contact_telegram';
         const isInstagramField = question.id === 'contact_instagram';
         
@@ -384,6 +416,16 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
                 if (isInstagramField && inputValue.startsWith('@')) {
                   inputValue = inputValue.replace(/^@+/, '');
                 }
+                // Для телефона разрешаем только цифры, +, пробелы, скобки и дефисы
+                if (isPhoneField) {
+                  inputValue = inputValue.replace(/[^\d+\s()\-]/g, '');
+                  // Разрешаем + только в начале
+                  if (inputValue.includes('+')) {
+                    inputValue = inputValue[0] === '+'
+                      ? '+' + inputValue.slice(1).replace(/\+/g, '')
+                      : inputValue.replace(/\+/g, '');
+                  }
+                }
                 onChange(inputValue);
               }}
               placeholder={placeholder}
@@ -392,6 +434,11 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
             {isTelegramField && value && (
               <div className={`field-hint ${validateTelegram(value) ? 'hint-success' : 'hint-error'}`}>
                 {validateTelegram(value) ? t('common.telegramHintOk', lang) : t('common.telegramHintBad', lang)}
+              </div>
+            )}
+            {isPhoneField && value && (
+              <div className={`field-hint ${validatePhone(value) ? 'hint-success' : 'hint-error'}`}>
+                {validatePhone(value) ? t('common.phoneHintOk', lang) : t('common.phoneHintBad', lang)}
               </div>
             )}
             {isInstagramField && value && (
@@ -693,7 +740,10 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
     }
   };
   
-  const isContactField = question.id === 'contact_telegram' || question.id === 'contact_instagram';
+  const isContactField =
+    question.id === 'contact_phone' ||
+    question.id === 'contact_telegram' ||
+    question.id === 'contact_instagram';
   
   return (
     <div className={`question-field ${isContactField ? 'contact-field' : ''}`}>
@@ -762,6 +812,16 @@ function validateInstagram(username: string): boolean {
   if (username.startsWith('.') || username.endsWith('.')) return false;
   if (username.includes('..')) return false;
   return true;
+}
+
+// Валидация телефона
+function validatePhone(phone: string): boolean {
+  if (!phone) return false;
+  // Разрешаем +, цифры, пробелы, скобки, дефисы. Требуем минимум 7 цифр.
+  const cleaned = phone.replace(/\D/g, '');
+  if (cleaned.length < 7 || cleaned.length > 15) return false;
+  const phoneRegex = /^\+?[0-9\s()\-]+$/;
+  return phoneRegex.test(phone);
 }
 
 // Рекурсивная функция для получения всех вопросов (включая условные)

@@ -304,13 +304,22 @@ export const babiesQuestionnaire: Questionnaire = {
       required: true
     },
     {
+      id: 'contact_phone',
+      type: 'text',
+      label: 'Номер телефона для связи',
+      labelEn: 'Phone number for contact',
+      placeholder: '+49 123 456 78 90',
+      placeholderEn: '+49 123 456 78 90',
+      required: true
+    },
+    {
       id: 'contact_telegram',
       type: 'text',
       label: 'Telegram для связи (укажите @username)',
       labelEn: 'Telegram for contact (enter @username)',
       placeholder: '@username',
       placeholderEn: '@username',
-      required: true
+      required: false
     },
     {
       id: 'contact_instagram',
@@ -531,13 +540,22 @@ export const childrenQuestionnaire: Questionnaire = {
       required: true
     },
     {
+      id: 'contact_phone',
+      type: 'text',
+      label: 'Номер телефона для связи',
+      labelEn: 'Phone number for contact',
+      placeholder: '+49 123 456 78 90',
+      placeholderEn: '+49 123 456 78 90',
+      required: true
+    },
+    {
       id: 'contact_telegram',
       type: 'text',
       label: 'Telegram для связи (укажите @username)',
       labelEn: 'Telegram for contact (enter @username)',
       placeholder: '@username',
       placeholderEn: '@username',
-      required: true
+      required: false
     },
     {
       id: 'contact_instagram',
@@ -1031,13 +1049,22 @@ export const femaleQuestionnaire: Questionnaire = {
       required: true
     },
     {
+      id: 'contact_phone',
+      type: 'text',
+      label: 'Номер телефона для связи',
+      labelEn: 'Phone number for contact',
+      placeholder: '+49 123 456 78 90',
+      placeholderEn: '+49 123 456 78 90',
+      required: true
+    },
+    {
       id: 'contact_telegram',
       type: 'text',
       label: 'Telegram для связи (укажите @username)',
       labelEn: 'Telegram for contact (enter @username)',
       placeholder: '@username',
       placeholderEn: '@username',
-      required: true
+      required: false
     },
     {
       id: 'contact_instagram',
@@ -1521,13 +1548,22 @@ export const maleQuestionnaire: Questionnaire = {
       required: true
     },
     {
+      id: 'contact_phone',
+      type: 'text',
+      label: 'Номер телефона для связи',
+      labelEn: 'Phone number for contact',
+      placeholder: '+49 123 456 78 90',
+      placeholderEn: '+49 123 456 78 90',
+      required: true
+    },
+    {
       id: 'contact_telegram',
       type: 'text',
       label: 'Telegram для связи (укажите @username)',
       labelEn: 'Telegram for contact (enter @username)',
       placeholder: '@username',
       placeholderEn: '@username',
-      required: true
+      required: false
     },
     {
       id: 'contact_instagram',

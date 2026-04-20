@@ -90,7 +90,7 @@ function createQuestionnaireHTML(
   const height = formData['q1_height'] || '';
   
   // Обрабатываем остальные ответы
-  const processedKeys = new Set(['q1_name', 'q1_surname', 'q1_age', 'q1_weight', 'q1_height', 'contact_telegram', 'contact_instagram']);
+  const processedKeys = new Set(['q1_name', 'q1_surname', 'q1_age', 'q1_weight', 'q1_height', 'contact_phone', 'contact_telegram', 'contact_instagram']);
   
   // Определяем, с какого вопроса начинать нумерацию
   let startNumberingFrom = 'q1_weight_goal';
@@ -218,17 +218,21 @@ function createQuestionnaireHTML(
   }
   
   // Контактные данные
+  const phone = formData['contact_phone'] || '';
   const telegram = formData['contact_telegram'] || '';
   const instagram = formData['contact_instagram'] || '';
   
   let contactsHTML = '';
+  if (phone) {
+    contactsHTML += `<p style="margin: 5px 0;"><strong>Телефон:</strong> ${escapeHtml(phone)}</p>`;
+  }
   if (telegram) {
     contactsHTML += `<p style="margin: 5px 0;"><strong>Telegram:</strong> ${escapeHtml(telegram)}</p>`;
   }
   if (instagram) {
     contactsHTML += `<p style="margin: 5px 0;"><strong>Instagram:</strong> @${escapeHtml(instagram)}</p>`;
   }
-  if (!telegram && !instagram) {
+  if (!phone && !telegram && !instagram) {
     contactsHTML = '<p style="margin: 5px 0; color: #999;">Не указаны</p>';
   }
   
@@ -494,11 +498,12 @@ function formatQuestionnaireMessage(
   }
   
   // Добавляем контактные данные в конец
+  const phone = formData['contact_phone'] || '';
   const telegram = formData['contact_telegram'] || '';
   const instagram = formData['contact_instagram'] || '';
   
   // Добавляем остальные ответы
-  const processedKeys = new Set(['q1_name', 'q1_surname', 'q1_age', 'q1_weight', 'q1_height', 'contact_telegram', 'contact_instagram']);
+  const processedKeys = new Set(['q1_name', 'q1_surname', 'q1_age', 'q1_weight', 'q1_height', 'contact_phone', 'contact_telegram', 'contact_instagram']);
   
   // Определяем, с какого вопроса начинать нумерацию
   // Для женской и мужской анкет - с q1_weight_goal
@@ -633,13 +638,16 @@ function formatQuestionnaireMessage(
   
   message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
   message += `📞 Контактные данные для связи:\n`;
+  if (phone) {
+    message += `📱 Телефон: ${phone}\n`;
+  }
   if (telegram) {
     message += `💬 Telegram: ${telegram}\n`;
   }
   if (instagram) {
     message += `📷 Instagram: @${instagram}\n`;
   }
-  if (!telegram && !instagram) {
+  if (!phone && !telegram && !instagram) {
     message += `Не указаны\n`;
   }
   message += `\n━━━━━━━━━━━━━━━━━━━━\n`;

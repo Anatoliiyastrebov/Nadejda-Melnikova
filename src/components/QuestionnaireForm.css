@@ -443,6 +443,29 @@
   font-size: 20px;
 }
 
+.optional-contacts-toggle {
+  margin: 8px 0 24px;
+  display: flex;
+  justify-content: center;
+}
+
+.optional-contacts-btn {
+  border: 1px solid #a8c5a8;
+  background: rgba(168, 197, 168, 0.12);
+  color: #4a5a4a;
+  padding: 10px 16px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.optional-contacts-btn:hover {
+  background: rgba(168, 197, 168, 0.2);
+  transform: translateY(-1px);
+}
+
 .error-message {
   color: #d9534f;
   font-size: 14px;

@@ -77,6 +77,16 @@
   font-weight: 600;
 }
 
+.impressum-section a {
+  color: #4a7b5b;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.impressum-section a:hover {
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .impressum-content {
     padding: 40px 20px;

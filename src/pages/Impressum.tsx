@@ -31,6 +31,12 @@ export const Impressum = () => {
           <h2>{t('impressum.contact', lang)}</h2>
           <p>{t('impressum.contactTextRu', lang)}</p>
           <p>{t('impressum.contactTextEn', lang)}</p>
+          <p>
+            Telegram:{' '}
+            <a href="https://t.me/melnikovan_blog" target="_blank" rel="noreferrer">
+              @melnikovan_blog
+            </a>
+          </p>
         </section>
         
         <section className="impressum-section">
