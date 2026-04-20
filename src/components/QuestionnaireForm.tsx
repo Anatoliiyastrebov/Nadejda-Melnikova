@@ -68,6 +68,12 @@ export const QuestionnaireForm: React.FC = () => {
   
   // Показываем все вопросы сразу на одной странице
   const allQuestions = getAllQuestions(questionnaire.questions);
+  const contactFieldIds = new Set(['contact_phone', 'contact_telegram', 'contact_instagram']);
+  const mainQuestions = allQuestions.filter((q) => !contactFieldIds.has(q.id));
+  const phoneQuestion = allQuestions.find((q) => q.id === 'contact_phone');
+  const optionalContactQuestions = allQuestions.filter(
+    (q) => q.id === 'contact_telegram' || q.id === 'contact_instagram'
+  );
   
   const handleInputChange = (fieldId: string, value: any) => {
     setFormData(prev => {
@@ -295,42 +301,70 @@ export const QuestionnaireForm: React.FC = () => {
         </div>
         
         <form className="questionnaire-form" onSubmit={handleSubmit} encType="multipart/form-data">
-          {allQuestions.map(question => {
-            const isOptionalContact =
-              question.id === 'contact_telegram' || question.id === 'contact_instagram';
+          {mainQuestions.map(question => (
+            <QuestionFieldComponent
+              key={question.id}
+              question={question}
+              value={formData[question.id]}
+              onChange={(value) => handleInputChange(question.id, value)}
+              onFieldChange={handleInputChange}
+              formData={formData}
+              errors={errors}
+              error={errors[question.id]}
+              lang={lang}
+            />
+          ))}
 
-            if (isOptionalContact && !showOptionalContacts) {
-              return null;
-            }
+          <section className="contact-section">
+            <div className="contact-section-header">
+              <h3>{t('common.contactSectionTitle', lang)}</h3>
+              <p>{t('common.contactSectionDescription', lang)}</p>
+            </div>
 
-            return (
+            {phoneQuestion && (
               <QuestionFieldComponent
-                key={question.id}
-                question={question}
-                value={formData[question.id]}
-                onChange={(value) => handleInputChange(question.id, value)}
+                key={phoneQuestion.id}
+                question={phoneQuestion}
+                value={formData[phoneQuestion.id]}
+                onChange={(value) => handleInputChange(phoneQuestion.id, value)}
                 onFieldChange={handleInputChange}
                 formData={formData}
                 errors={errors}
-                error={errors[question.id]}
+                error={errors[phoneQuestion.id]}
                 lang={lang}
+                contactVariant="primary"
               />
-            );
-          })}
+            )}
 
-          {!showOptionalContacts && (
-            <div className="optional-contacts-toggle">
-              <button
-                type="button"
-                className="optional-contacts-btn"
-                onClick={() => setShowOptionalContacts(true)}
-              >
-                {lang === 'en'
-                  ? 'Add Telegram / Instagram (optional)'
-                  : 'Добавить Telegram / Instagram (необязательно)'}
-              </button>
-            </div>
-          )}
+            {!showOptionalContacts ? (
+              <div className="optional-contacts-toggle">
+                <button
+                  type="button"
+                  className="optional-contacts-btn"
+                  onClick={() => setShowOptionalContacts(true)}
+                >
+                  {t('common.contactSectionOptionalButton', lang)}
+                </button>
+              </div>
+            ) : (
+              <div className="optional-contact-grid">
+                {optionalContactQuestions.map((question) => (
+                  <QuestionFieldComponent
+                    key={question.id}
+                    question={question}
+                    value={formData[question.id]}
+                    onChange={(value) => handleInputChange(question.id, value)}
+                    onFieldChange={handleInputChange}
+                    formData={formData}
+                    errors={errors}
+                    error={errors[question.id]}
+                    lang={lang}
+                    contactVariant="secondary"
+                  />
+                ))}
+              </div>
+            )}
+          </section>
           
           <div className="consent-section" id="consent-checkbox">
             <label className="consent-label">
@@ -369,6 +403,7 @@ interface QuestionFieldProps {
   errors?: Record<string, string>;
   error?: string;
   lang: 'ru' | 'en';
+  contactVariant?: 'primary' | 'secondary';
 }
 
 const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
@@ -379,7 +414,8 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
   formData,
   errors,
   error,
-  lang
+  lang,
+  contactVariant
 }) => {
   const [fileList, setFileList] = useState<File[]>([]);
   const label = (question.labelEn && lang === 'en') ? question.labelEn : question.label;
@@ -744,9 +780,10 @@ const QuestionFieldComponent: React.FC<QuestionFieldProps> = ({
     question.id === 'contact_phone' ||
     question.id === 'contact_telegram' ||
     question.id === 'contact_instagram';
+  const contactClass = contactVariant ? `contact-field-${contactVariant}` : '';
   
   return (
-    <div className={`question-field ${isContactField ? 'contact-field' : ''}`}>
+    <div className={`question-field ${isContactField ? 'contact-field' : ''} ${contactClass}`}>
       <label htmlFor={question.id} className="question-label">
         {label}
         {question.required && <span className="required">*</span>}

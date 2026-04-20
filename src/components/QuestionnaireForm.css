@@ -443,6 +443,52 @@
   font-size: 20px;
 }
 
+.contact-section {
+  margin-top: 40px;
+  padding: 24px;
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(245, 250, 245, 0.95) 100%);
+  border: 1px solid rgba(168, 197, 168, 0.35);
+  box-shadow: 0 8px 24px rgba(107, 125, 107, 0.08);
+}
+
+.contact-section-header h3 {
+  margin: 0 0 8px;
+  color: #3f5a3f;
+  font-size: 22px;
+}
+
+.contact-section-header p {
+  margin: 0 0 18px;
+  color: #6b7d6b;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.contact-field-primary {
+  border-color: rgba(94, 138, 94, 0.4);
+  background: linear-gradient(135deg, rgba(168, 197, 168, 0.14) 0%, rgba(226, 240, 226, 0.6) 100%);
+}
+
+.contact-field-primary .question-label::before {
+  content: '📱 ';
+}
+
+.contact-field-secondary {
+  margin-top: 12px;
+  background: linear-gradient(135deg, rgba(168, 197, 168, 0.06) 0%, rgba(107, 125, 107, 0.04) 100%);
+}
+
+.contact-field-secondary .question-label {
+  font-size: 16px;
+}
+
+.optional-contact-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
 .optional-contacts-toggle {
   margin: 8px 0 24px;
   display: flex;
@@ -596,6 +642,14 @@
   .input-unit {
     font-size: 12px;
     right: 12px;
+  }
+
+  .contact-section {
+    padding: 18px;
+  }
+
+  .contact-section-header h3 {
+    font-size: 20px;
   }
 }
 
