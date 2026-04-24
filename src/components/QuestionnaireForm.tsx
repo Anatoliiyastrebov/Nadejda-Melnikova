@@ -7,6 +7,17 @@ import { sendToTelegram, exportToJSON } from '../utils/telegram';
 import { LanguageSwitcher } from './LanguageSwitcher';
 import './QuestionnaireForm.css';
 
+const CONTACT_METHODS = [
+  { key: 'telegram', label: 'Telegram', fieldId: 'contact_telegram' },
+  { key: 'whatsapp', label: 'WhatsApp', fieldId: 'contact_whatsapp' },
+  { key: 'vk', label: 'VK', fieldId: 'contact_vk' },
+  { key: 'max', label: 'Max', fieldId: 'contact_max' },
+  { key: 'instagram', label: 'Instagram', fieldId: 'contact_instagram' },
+  { key: 'facebook', label: 'Facebook', fieldId: 'contact_facebook' },
+  { key: 'email', label: 'Email', fieldId: 'contact_email' },
+  { key: 'phone', label: 'Телефон', fieldId: 'contact_phone' }
+] as const;
+
 export const QuestionnaireForm: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
@@ -17,7 +28,6 @@ export const QuestionnaireForm: React.FC = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [consent, setConsent] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showOptionalContacts, setShowOptionalContacts] = useState(false);
   
   useEffect(() => {
     if (id) {
@@ -68,12 +78,17 @@ export const QuestionnaireForm: React.FC = () => {
   
   // Показываем все вопросы сразу на одной странице
   const allQuestions = getAllQuestions(questionnaire.questions);
-  const contactFieldIds = new Set(['contact_phone', 'contact_telegram', 'contact_instagram']);
+  const contactFieldIds = new Set([
+    'contact_phone',
+    'contact_telegram',
+    'contact_instagram',
+    'contact_whatsapp',
+    'contact_vk',
+    'contact_max',
+    'contact_facebook',
+    'contact_email'
+  ]);
   const mainQuestions = allQuestions.filter((q) => !contactFieldIds.has(q.id));
-  const phoneQuestion = allQuestions.find((q) => q.id === 'contact_phone');
-  const optionalContactQuestions = allQuestions.filter(
-    (q) => q.id === 'contact_telegram' || q.id === 'contact_instagram'
-  );
   
   const handleInputChange = (fieldId: string, value: any) => {
     setFormData(prev => {
@@ -142,27 +157,6 @@ export const QuestionnaireForm: React.FC = () => {
         }
       }
       
-      // Валидация Telegram
-      if (question.id === 'contact_telegram' && formData[question.id]) {
-        if (!validateTelegram(formData[question.id])) {
-          newErrors[question.id] = t('common.invalidTelegram', lang);
-        }
-      }
-
-      // Валидация телефона
-      if (question.id === 'contact_phone' && formData[question.id]) {
-        if (!validatePhone(formData[question.id])) {
-          newErrors[question.id] = t('common.invalidPhone', lang);
-        }
-      }
-      
-      // Валидация Instagram
-      if (question.id === 'contact_instagram' && formData[question.id]) {
-        if (!validateInstagram(formData[question.id])) {
-          newErrors[question.id] = t('common.invalidInstagram', lang);
-        }
-      }
-      
       // Проверяем условные поля, если они должны быть показаны
       if (question.conditionalFields) {
         question.conditionalFields.forEach(cond => {
@@ -181,6 +175,42 @@ export const QuestionnaireForm: React.FC = () => {
     };
     
     allQuestions.forEach(validateQuestion);
+
+    // Валидация блока "Предпочитаемый способ связи"
+    const selectedMethods = Array.isArray(formData.preferred_contact_methods)
+      ? formData.preferred_contact_methods
+      : [];
+
+    if (selectedMethods.length === 0) {
+      newErrors.preferred_contact_methods = lang === 'en'
+        ? 'Select at least one contact method'
+        : 'Выберите хотя бы один способ связи';
+    }
+
+    selectedMethods.forEach((methodKey: string) => {
+      const methodConfig = CONTACT_METHODS.find((m) => m.key === methodKey);
+      if (!methodConfig) return;
+      const value = String(formData[methodConfig.fieldId] || '').trim();
+      if (!value) {
+        newErrors[methodConfig.fieldId] = t('common.required', lang);
+        return;
+      }
+
+      if (methodKey === 'telegram' && !validateTelegram(value.startsWith('@') ? value : `@${value}`)) {
+        newErrors[methodConfig.fieldId] = t('common.invalidTelegram', lang);
+      }
+      if (methodKey === 'instagram' && !validateInstagram(value.replace(/^@+/, ''))) {
+        newErrors[methodConfig.fieldId] = t('common.invalidInstagram', lang);
+      }
+      if ((methodKey === 'phone' || methodKey === 'whatsapp') && !validatePhone(value)) {
+        newErrors[methodConfig.fieldId] = t('common.invalidPhone', lang);
+      }
+      if (methodKey === 'email' && !validateEmail(value)) {
+        newErrors[methodConfig.fieldId] = lang === 'en'
+          ? 'Invalid email format'
+          : 'Неверный формат email';
+      }
+    });
     
     setErrors(newErrors);
     return newErrors;
@@ -317,52 +347,85 @@ export const QuestionnaireForm: React.FC = () => {
 
           <section className="contact-section">
             <div className="contact-section-header">
-              <h3>{t('common.contactSectionTitle', lang)}</h3>
-              <p>{t('common.contactSectionDescription', lang)}</p>
+              <h3>Предпочитаемый способ связи</h3>
+              <p>Отметьте удобные способы связи и заполните поля только для выбранных вариантов.</p>
             </div>
 
-            {phoneQuestion && (
-              <QuestionFieldComponent
-                key={phoneQuestion.id}
-                question={phoneQuestion}
-                value={formData[phoneQuestion.id]}
-                onChange={(value) => handleInputChange(phoneQuestion.id, value)}
-                onFieldChange={handleInputChange}
-                formData={formData}
-                errors={errors}
-                error={errors[phoneQuestion.id]}
-                lang={lang}
-                contactVariant="primary"
-              />
-            )}
+            <div className="contact-methods-grid" id="preferred_contact_methods">
+              {CONTACT_METHODS.map((method) => {
+                const selected = (formData.preferred_contact_methods || []).includes(method.key);
+                const value = String(formData[method.fieldId] || '');
+                const placeholderMap: Record<string, string> = {
+                  telegram: '@username',
+                  whatsapp: '+49 123 456 78 90',
+                  vk: 'username или vk.com/username',
+                  max: 'username или номер',
+                  instagram: 'username',
+                  facebook: 'profile name or link',
+                  email: 'name@example.com',
+                  phone: '+7 (9XX) XXX-XX-XX'
+                };
 
-            {!showOptionalContacts ? (
-              <div className="optional-contacts-toggle">
-                <button
-                  type="button"
-                  className="optional-contacts-btn"
-                  onClick={() => setShowOptionalContacts(true)}
-                >
-                  {t('common.contactSectionOptionalButton', lang)}
-                </button>
-              </div>
-            ) : (
-              <div className="optional-contact-grid">
-                {optionalContactQuestions.map((question) => (
-                  <QuestionFieldComponent
-                    key={question.id}
-                    question={question}
-                    value={formData[question.id]}
-                    onChange={(value) => handleInputChange(question.id, value)}
-                    onFieldChange={handleInputChange}
-                    formData={formData}
-                    errors={errors}
-                    error={errors[question.id]}
-                    lang={lang}
-                    contactVariant="secondary"
-                  />
-                ))}
-              </div>
+                return (
+                  <div key={method.key} className="contact-method-card">
+                    <label className="contact-method-item">
+                      <input
+                        type="checkbox"
+                        checked={selected}
+                        onChange={(e) => {
+                          const current = Array.isArray(formData.preferred_contact_methods)
+                            ? formData.preferred_contact_methods
+                            : [];
+                          const next = e.target.checked
+                            ? [...current, method.key]
+                            : current.filter((m: string) => m !== method.key);
+                          handleInputChange('preferred_contact_methods', next);
+                          if (!e.target.checked) {
+                            handleInputChange(method.fieldId, '');
+                          }
+                        }}
+                      />
+                      <span>{method.label}</span>
+                    </label>
+
+                    {selected && (
+                      <div className="contact-method-inline-field">
+                        <input
+                          id={method.fieldId}
+                          type="text"
+                          className={`form-input ${errors[method.fieldId] ? 'error' : ''}`}
+                          value={value}
+                          placeholder={placeholderMap[method.key]}
+                          onChange={(e) => {
+                            let inputValue = e.target.value;
+                            if (method.key === 'telegram' && inputValue && !inputValue.startsWith('@')) {
+                              inputValue = `@${inputValue.replace(/^@+/, '')}`;
+                            }
+                            if (method.key === 'instagram') {
+                              inputValue = inputValue.replace(/^@+/, '');
+                            }
+                            if (method.key === 'phone' || method.key === 'whatsapp') {
+                              inputValue = inputValue.replace(/[^\d+\s()\-]/g, '');
+                              if (inputValue.includes('+')) {
+                                inputValue = inputValue[0] === '+'
+                                  ? '+' + inputValue.slice(1).replace(/\+/g, '')
+                                  : inputValue.replace(/\+/g, '');
+                              }
+                            }
+                            handleInputChange(method.fieldId, inputValue);
+                          }}
+                        />
+                        {errors[method.fieldId] && (
+                          <div className="error-message">{errors[method.fieldId]}</div>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+            {errors.preferred_contact_methods && (
+              <div className="error-message">{errors.preferred_contact_methods}</div>
             )}
           </section>
           
@@ -859,6 +922,11 @@ function validatePhone(phone: string): boolean {
   if (cleaned.length < 7 || cleaned.length > 15) return false;
   const phoneRegex = /^\+?[0-9\s()\-]+$/;
   return phoneRegex.test(phone);
+}
+
+function validateEmail(email: string): boolean {
+  if (!email) return false;
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
 }
 
 // Рекурсивная функция для получения всех вопросов (включая условные)

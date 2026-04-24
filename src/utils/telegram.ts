@@ -90,7 +90,22 @@ function createQuestionnaireHTML(
   const height = formData['q1_height'] || '';
   
   // Обрабатываем остальные ответы
-  const processedKeys = new Set(['q1_name', 'q1_surname', 'q1_age', 'q1_weight', 'q1_height', 'contact_phone', 'contact_telegram', 'contact_instagram']);
+  const processedKeys = new Set([
+    'q1_name',
+    'q1_surname',
+    'q1_age',
+    'q1_weight',
+    'q1_height',
+    'preferred_contact_methods',
+    'contact_phone',
+    'contact_telegram',
+    'contact_whatsapp',
+    'contact_vk',
+    'contact_max',
+    'contact_instagram',
+    'contact_facebook',
+    'contact_email'
+  ]);
   
   // Определяем, с какого вопроса начинать нумерацию
   let startNumberingFrom = 'q1_weight_goal';
@@ -218,21 +233,29 @@ function createQuestionnaireHTML(
   }
   
   // Контактные данные
-  const phone = formData['contact_phone'] || '';
-  const telegram = formData['contact_telegram'] || '';
-  const instagram = formData['contact_instagram'] || '';
+  const contactLabels: Record<string, string> = {
+    contact_phone: 'Телефон',
+    contact_telegram: 'Telegram',
+    contact_whatsapp: 'WhatsApp',
+    contact_vk: 'VK',
+    contact_max: 'Max',
+    contact_instagram: 'Instagram',
+    contact_facebook: 'Facebook',
+    contact_email: 'Email'
+  };
+  const selectedMethods = Array.isArray(formData.preferred_contact_methods)
+    ? formData.preferred_contact_methods
+    : [];
   
   let contactsHTML = '';
-  if (phone) {
-    contactsHTML += `<p style="margin: 5px 0;"><strong>Телефон:</strong> ${escapeHtml(phone)}</p>`;
-  }
-  if (telegram) {
-    contactsHTML += `<p style="margin: 5px 0;"><strong>Telegram:</strong> ${escapeHtml(telegram)}</p>`;
-  }
-  if (instagram) {
-    contactsHTML += `<p style="margin: 5px 0;"><strong>Instagram:</strong> @${escapeHtml(instagram)}</p>`;
-  }
-  if (!phone && !telegram && !instagram) {
+  selectedMethods.forEach((methodKey: string) => {
+    const fieldId = `contact_${methodKey}`;
+    const value = String(formData[fieldId] || '').trim();
+    if (!value) return;
+    const label = contactLabels[fieldId] || fieldId;
+    contactsHTML += `<p style="margin: 5px 0;"><strong>${escapeHtml(label)}:</strong> ${escapeHtml(value)}</p>`;
+  });
+  if (!contactsHTML) {
     contactsHTML = '<p style="margin: 5px 0; color: #999;">Не указаны</p>';
   }
   
@@ -498,12 +521,37 @@ function formatQuestionnaireMessage(
   }
   
   // Добавляем контактные данные в конец
-  const phone = formData['contact_phone'] || '';
-  const telegram = formData['contact_telegram'] || '';
-  const instagram = formData['contact_instagram'] || '';
+  const contactLabels: Record<string, string> = {
+    contact_phone: 'Телефон',
+    contact_telegram: 'Telegram',
+    contact_whatsapp: 'WhatsApp',
+    contact_vk: 'VK',
+    contact_max: 'Max',
+    contact_instagram: 'Instagram',
+    contact_facebook: 'Facebook',
+    contact_email: 'Email'
+  };
+  const selectedMethods = Array.isArray(formData.preferred_contact_methods)
+    ? formData.preferred_contact_methods
+    : [];
   
   // Добавляем остальные ответы
-  const processedKeys = new Set(['q1_name', 'q1_surname', 'q1_age', 'q1_weight', 'q1_height', 'contact_phone', 'contact_telegram', 'contact_instagram']);
+  const processedKeys = new Set([
+    'q1_name',
+    'q1_surname',
+    'q1_age',
+    'q1_weight',
+    'q1_height',
+    'preferred_contact_methods',
+    'contact_phone',
+    'contact_telegram',
+    'contact_whatsapp',
+    'contact_vk',
+    'contact_max',
+    'contact_instagram',
+    'contact_facebook',
+    'contact_email'
+  ]);
   
   // Определяем, с какого вопроса начинать нумерацию
   // Для женской и мужской анкет - с q1_weight_goal
@@ -638,16 +686,14 @@ function formatQuestionnaireMessage(
   
   message += `━━━━━━━━━━━━━━━━━━━━\n\n`;
   message += `📞 Контактные данные для связи:\n`;
-  if (phone) {
-    message += `📱 Телефон: ${phone}\n`;
-  }
-  if (telegram) {
-    message += `💬 Telegram: ${telegram}\n`;
-  }
-  if (instagram) {
-    message += `📷 Instagram: @${instagram}\n`;
-  }
-  if (!phone && !telegram && !instagram) {
+  selectedMethods.forEach((methodKey: string) => {
+    const fieldId = `contact_${methodKey}`;
+    const value = String(formData[fieldId] || '').trim();
+    if (!value) return;
+    const label = contactLabels[fieldId] || fieldId;
+    message += `${label}: ${value}\n`;
+  });
+  if (!selectedMethods.length) {
     message += `Не указаны\n`;
   }
   message += `\n━━━━━━━━━━━━━━━━━━━━\n`;

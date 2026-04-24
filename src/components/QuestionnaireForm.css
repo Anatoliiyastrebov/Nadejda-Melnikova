@@ -489,6 +489,44 @@
   gap: 12px;
 }
 
+.contact-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.contact-method-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  cursor: pointer;
+}
+
+.contact-method-card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.contact-method-item input[type='checkbox'] {
+  accent-color: var(--accent);
+  width: 16px;
+  height: 16px;
+}
+
+.contact-method-inline-field {
+  padding-left: 6px;
+}
+
+.contact-method-inline-field .form-input {
+  margin-top: 0;
+}
+
 .optional-contacts-toggle {
   margin: 8px 0 24px;
   display: flex;
@@ -847,6 +885,10 @@
   background: #f8f8fa;
   border: 1px solid var(--border);
   border-radius: 12px;
+}
+
+.consent-label input[type="checkbox"] {
+  accent-color: var(--accent);
 }
 
 .submit-btn {
