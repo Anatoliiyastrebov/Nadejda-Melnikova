@@ -30,7 +30,17 @@ export const Landing: React.FC = () => {
               </React.Fragment>
             ))}
           </p>
-          <p className="landing-signature">{t('common.signature', lang)}</p>
+          <p className="landing-signature">
+            <a
+              href="https://t.me/melnikovan_blog"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="landing-signature-link"
+            >
+              {lang === 'en' ? 'Nadezhda Melnikova' : 'Надежда Мельникова'}
+            </a>
+            {lang === 'en' ? ', your wellness consultant' : ', ваш wellness-консультант'}
+          </p>
         </div>
         
         <div className="questionnaires-grid">
